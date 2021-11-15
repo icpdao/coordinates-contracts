@@ -156,38 +156,50 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     override
     returns (string memory result)
   {
-    require(_lands[tokenId].isBuyed, "not buyed");
-
     (int128 x, int128 y) = getCoordinates(tokenId);
 
-    string memory _landStr = string(
-      abi.encodePacked("<div>Lootland(", getCoordinatesString(x, y), ")</div>")
+    string memory _slogan;
+    if (!_lands[tokenId].isBuyed) {
+      _slogan = "Waiting for you";
+    } else {
+      _slogan = "Inviting the talented you to become a lootverse builder for the next 10 years, And For you on my side bought:";
+      if (_lands[tokenId].isGived && bytes(_lands[tokenId].slogan).length > 0) {
+        _slogan = _lands[tokenId].slogan;
+      }
+    }
+
+    string memory _sloganStr = string(
+      abi.encodePacked('<div class="sologan">', _slogan, "</div>")
     );
 
-    string memory contentStr;
-    if (_lands[tokenId].isGived) {
-      string memory _solganStr;
-      if (bytes(_lands[tokenId].slogan).length == 0) {
-        // TODO
-        _solganStr = "<div>loot`s builder</div>";
-      } else {
-        _solganStr = string(
-          abi.encodePacked("<div>", _lands[tokenId].slogan, "</div>")
-        );
-      }
-      contentStr = string(abi.encodePacked(_solganStr, _landStr));
-    } else {
-      string[3] memory buffer;
-      // TODO
-      buffer[0] = string(abi.encodePacked("<div>", "111111", "</div>"));
-      buffer[1] = string(abi.encodePacked("<div>", _landStr, "</div>"));
-      buffer[2] = string(abi.encodePacked("<div>", "222222", "</div>"));
-      contentStr = string(abi.encodePacked(buffer[0], buffer[1], buffer[2]));
-    }
+    string memory _landStr = string(
+      abi.encodePacked(
+        '<div class="land">Lootland (',
+        getCoordinatesString(x, y),
+        ")</div>"
+      )
+    );
+
+    string memory _notesStr = string(
+      abi.encodePacked(
+        '<div class="notes">',
+        "<div>Notes:</div>",
+        "<div>- Lootland is created for builders</div>",
+        "<div>- Only invited to be a builder</div>",
+        "<div>- Each builder can only buy two lands</div>",
+        "<div>- Only one person can be invited to each land</div>",
+        "<div>- Each person can only accept an invitation once</div>",
+        "<div>- Each land is 100*100 square meters</div>",
+        "</div>"
+      )
+    );
+
     string memory svgStr = string(
       abi.encodePacked(
-        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350"><rect width="100%" height="100%" fill="black" /><foreignObject width="350" height="350" x="0" y="0"><body xmlns="http://www.w3.org/1999/xhtml"><style>.base { color: white; font-family: serif; font-size: 14px; margin: 10px; }</style><div class="base">',
-        contentStr,
+        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 360 360"><rect width="100%" height="100%" fill="#0F4C81" /><foreignObject width="360" height="360" x="0" y="0"><body xmlns="http://www.w3.org/1999/xhtml"><style>.base {font-family:sans-serif;margin:10px;}.sologan { color: #F0EDE5; font-size: 18px;margin-top:30px;height: 90px; }.land { color: #C0D725; font-size: 24px; height: 60px; }.notes { color: #A5B8D0; font-size: 14px; }</style><div class="base">',
+        _sloganStr,
+        _landStr,
+        _notesStr,
         "</div></body></foreignObject></svg>"
       )
     );

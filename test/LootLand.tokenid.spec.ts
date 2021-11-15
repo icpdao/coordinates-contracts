@@ -97,12 +97,13 @@ describe("LootLand.tokenid", async () => {
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
 
-    let tokenId = await landNFTToken.getTokenId(1, 1);
-    await expect(landNFTToken.tokenURI(tokenId)).to.revertedWith("not buyed");
-
-    tokenId = await landNFTToken.getTokenId(0, 0);
+    let tokenId = await landNFTToken.getTokenId(0, 0);
     let content = await landNFTToken.tokenURI(tokenId);
-    // console.log(content);
+    console.log("0,0", content);
+
+    tokenId = await landNFTToken.getTokenId(1, 1);
+    content = await landNFTToken.tokenURI(tokenId);
+    console.log("1,1 no buy", content);
 
     await (
       await landNFTToken
@@ -111,18 +112,18 @@ describe("LootLand.tokenid", async () => {
     ).wait();
     tokenId = await landNFTToken.getTokenId(100, -10);
     content = await landNFTToken.tokenURI(tokenId);
-    // console.log(content);
+    console.log("100,-10 buy", content);
 
     await (await landNFTToken.connect(w1).giveTo(100, -10, w2.address)).wait();
     tokenId = await landNFTToken.getTokenId(100, -10);
     content = await landNFTToken.tokenURI(tokenId);
-    // console.log(content);
+    console.log("100,-10, gived", content);
 
     await (
-      await landNFTToken.connect(w2).setSlogan(100, -10, "hahahah")
+      await landNFTToken.connect(w2).setSlogan(100, -10, "hahah<br/>ah")
     ).wait();
     tokenId = await landNFTToken.getTokenId(100, -10);
     content = await landNFTToken.tokenURI(tokenId);
-    // console.log(content);
+    console.log("100,-10 have slogan", content);
   });
 });
