@@ -44,23 +44,16 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   }
 
   function buy(int128 x, int128 y) external payable override hasGived {
-    require(buyLandCount[_msgSender()] < 2, "caller is already buyed");
+    _buy(x, y);
+  }
 
-    uint256 tokenId = getTokenId(x, y);
-
-    require(!_lands[tokenId].isBuyed, "land is buyed");
-    require(msg.value >= PRICE, "eth too less");
-
-    _lands[tokenId] = Land(x, y, "", _msgSender(), address(0), true, false);
-
-    _buyLandTokenIds[_msgSender()].push(tokenId);
-    buyLandCount[_msgSender()] += 1;
-
-    if (msg.value > PRICE) {
-      payable(_msgSender()).transfer(msg.value - PRICE);
-    }
-
-    emit Buy(x, y, _msgSender());
+  function buy2(
+    int128 x1,
+    int128 y1,
+    int128 x2,
+    int128 y2
+  ) external payable override hasGived {
+    _buy2(x1, y1, x2, y2);
   }
 
   function giveTo(
@@ -68,21 +61,29 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     int128 y,
     address givedAddress
   ) external override hasGived {
-    uint256 tokenId = getTokenId(x, y);
+    _giveTo(x, y, givedAddress);
+  }
 
-    require(
-      _lands[tokenId].buyedAddress == _msgSender(),
-      "caller didn't buyed this token"
-    );
-    require(!_lands[tokenId].isGived, "token is gived");
+  function buyAndGiveTo(
+    int128 x,
+    int128 y,
+    address givedAddress
+  ) external payable override hasGived {
+    _buy(x, y);
+    _giveTo(x, y, givedAddress);
+  }
 
-    _lands[tokenId].givedAddress = givedAddress;
-    _lands[tokenId].isGived = true;
-    _gived[givedAddress] = tokenId;
-
-    _safeMint(givedAddress, tokenId);
-
-    emit GiveTo(x, y, givedAddress);
+  function buy2AndGiveTo(
+    int128 x1,
+    int128 y1,
+    address givedAddress1,
+    int128 x2,
+    int128 y2,
+    address givedAddress2
+  ) external payable override hasGived {
+    _buy2(x1, y1, x2, y2);
+    _giveTo(x1, y1, givedAddress1);
+    _giveTo(x2, y2, givedAddress2);
   }
 
   function setSlogan(
@@ -261,5 +262,68 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     }
 
     data = string(abi.encodePacked(xPrefix, xStr, ",", yPrefix, yStr));
+  }
+
+  function _giveTo(
+    int128 x,
+    int128 y,
+    address givedAddress
+  ) private {
+    uint256 tokenId = getTokenId(x, y);
+
+    require(
+      _lands[tokenId].buyedAddress == _msgSender(),
+      "caller didn't buyed this token"
+    );
+    require(!_lands[tokenId].isGived, "token is gived");
+
+    _lands[tokenId].givedAddress = givedAddress;
+    _lands[tokenId].isGived = true;
+    _gived[givedAddress] = tokenId;
+
+    _safeMint(givedAddress, tokenId);
+
+    emit GiveTo(x, y, givedAddress);
+  }
+
+  function _buy2(
+    int128 x1,
+    int128 y1,
+    int128 x2,
+    int128 y2
+  ) private {
+    require(msg.value >= PRICE * 2, "eth too less");
+
+    _buyWithoutEth(x1, y1);
+    _buyWithoutEth(x2, y2);
+
+    if (msg.value > PRICE * 2) {
+      payable(_msgSender()).transfer(msg.value - PRICE * 2);
+    }
+  }
+
+  function _buy(int128 x, int128 y) private {
+    require(msg.value >= PRICE, "eth too less");
+
+    _buyWithoutEth(x, y);
+
+    if (msg.value > PRICE) {
+      payable(_msgSender()).transfer(msg.value - PRICE);
+    }
+  }
+
+  function _buyWithoutEth(int128 x, int128 y) private {
+    require(buyLandCount[_msgSender()] < 2, "caller is already buyed");
+
+    uint256 tokenId = getTokenId(x, y);
+
+    require(!_lands[tokenId].isBuyed, "land is buyed");
+
+    _lands[tokenId] = Land(x, y, "", _msgSender(), address(0), true, false);
+
+    _buyLandTokenIds[_msgSender()].push(tokenId);
+    buyLandCount[_msgSender()] += 1;
+
+    emit Buy(x, y, _msgSender());
   }
 }

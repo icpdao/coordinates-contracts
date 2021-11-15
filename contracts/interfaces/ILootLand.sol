@@ -20,11 +20,33 @@ interface ILootLand {
 
   function buy(int128 x, int128 y) external payable;
 
+  function buy2(
+    int128 x1,
+    int128 y1,
+    int128 x2,
+    int128 y2
+  ) external payable;
+
   function giveTo(
     int128 x,
     int128 y,
     address givedAddress
   ) external;
+
+  function buyAndGiveTo(
+    int128 x,
+    int128 y,
+    address givedAddress
+  ) external payable;
+
+  function buy2AndGiveTo(
+    int128 x1,
+    int128 y1,
+    address givedAddress1,
+    int128 x2,
+    int128 y2,
+    address givedAddress2
+  ) external payable;
 
   function setSlogan(
     int128 x,
