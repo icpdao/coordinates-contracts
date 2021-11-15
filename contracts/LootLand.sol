@@ -5,49 +5,29 @@ import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "./interfaces/ILand.sol";
+import "./interfaces/ILootLand.sol";
 
-contract Land is ILand, ERC721Enumerable, Ownable {
-  struct Token {
-    int128 x;
-    int128 y;
-    string slogan;
-    address buyedAddress;
-    address givedAddress;
-    bool isBuyed;
-    bool isGived;
-  }
-
-  struct Spread {
-    uint256 tokenId;
-    address tokenOnwer;
-    address parent;
-  }
-
+contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   // tokenid => TOKEN
-  mapping(uint256 => Token) public tokens;
+  mapping(uint256 => Land) private _lands;
 
-  // givedAddress => tokenid
-  mapping(address => uint256) public gived;
+  // givedAddress => tokenId
+  mapping(address => uint256) private _gived;
+
+  // buyedAddress => buy land tokenids
+  mapping(address => uint256[]) private _buyLandTokenIds;
 
   // buyedAddress => buy count
-  mapping(address => uint8) public buyCount;
-  // buyedAddress => buy count
-  mapping(address => uint256[]) public buyTokens;
+  mapping(address => uint8) public override buyLandCount;
 
-  // TODO PRICE VALUE
-  uint256 public constant PRICE = 10 gwei;
+  uint256 public constant PRICE = 4669201609102000 wei;
 
   modifier hasGived() {
     require(
-      tokens[gived[_msgSender()]].givedAddress == _msgSender(),
+      _lands[_gived[_msgSender()]].isGived &&
+        _lands[_gived[_msgSender()]].givedAddress == _msgSender(),
       "caller is no gived"
     );
-    _;
-  }
-
-  modifier canBuy() {
-    require(buyCount[_msgSender()] < 2, "caller is already buyed");
     _;
   }
 
@@ -55,24 +35,26 @@ contract Land is ILand, ERC721Enumerable, Ownable {
     // TODO owner 问题
     transferOwnership(_owner);
     uint256 tokenId = getTokenId(0, 0);
-    tokens[tokenId] = Token(0, 0, "", address(0), _owner, true, true);
-    gived[_owner] = tokenId;
+    _lands[tokenId] = Land(0, 0, "", address(0), _owner, true, true);
+    _gived[_owner] = tokenId;
     _safeMint(_owner, tokenId);
 
     emit Buy(0, 0, address(0));
     emit GiveTo(0, 0, _owner);
   }
 
-  function buy(int128 x, int128 y) external payable override hasGived canBuy {
+  function buy(int128 x, int128 y) external payable override hasGived {
+    require(buyLandCount[_msgSender()] < 2, "caller is already buyed");
+
     uint256 tokenId = getTokenId(x, y);
 
-    require(!tokens[tokenId].isBuyed, "token is buyed");
-    require(msg.value >= PRICE);
+    require(!_lands[tokenId].isBuyed, "land is buyed");
+    require(msg.value >= PRICE, "eth too less");
 
-    tokens[tokenId] = Token(x, y, "", _msgSender(), address(0), true, false);
+    _lands[tokenId] = Land(x, y, "", _msgSender(), address(0), true, false);
 
-    buyTokens[_msgSender()].push(tokenId);
-    buyCount[_msgSender()] += 1;
+    _buyLandTokenIds[_msgSender()].push(tokenId);
+    buyLandCount[_msgSender()] += 1;
 
     if (msg.value > PRICE) {
       payable(_msgSender()).transfer(msg.value - PRICE);
@@ -89,14 +71,14 @@ contract Land is ILand, ERC721Enumerable, Ownable {
     uint256 tokenId = getTokenId(x, y);
 
     require(
-      tokens[tokenId].buyedAddress == _msgSender(),
+      _lands[tokenId].buyedAddress == _msgSender(),
       "caller didn't buyed this token"
     );
-    require(!tokens[tokenId].isGived, "token is gived");
+    require(!_lands[tokenId].isGived, "token is gived");
 
-    tokens[tokenId].givedAddress = givedAddress;
-    tokens[tokenId].isGived = true;
-    gived[givedAddress] = tokenId;
+    _lands[tokenId].givedAddress = givedAddress;
+    _lands[tokenId].isGived = true;
+    _gived[givedAddress] = tokenId;
 
     _safeMint(givedAddress, tokenId);
 
@@ -113,7 +95,7 @@ contract Land is ILand, ERC721Enumerable, Ownable {
     require(ownerOf(tokenId) == _msgSender(), "token is not belong to caller");
     require(bytes(slogan).length < 256, "slogan is too long");
 
-    tokens[tokenId].slogan = slogan;
+    _lands[tokenId].slogan = slogan;
 
     emit SetSlogan(x, y, slogan);
   }
@@ -122,58 +104,58 @@ contract Land is ILand, ERC721Enumerable, Ownable {
     payable(_msgSender()).transfer(address(this).balance);
   }
 
-  function land(int128 x, int128 y)
+  function land(int128 _x, int128 _y)
     external
     view
     override
-    returns (
-      string memory slogan,
-      address buyedAddress,
-      address givedAddress,
-      bool isBuyed,
-      bool isGived
-    )
+    returns (Land memory _land)
   {
-    uint256 tokenId = getTokenId(x, y);
-    Token memory token = tokens[tokenId];
-    slogan = token.slogan;
-    buyedAddress = token.buyedAddress;
-    givedAddress = token.givedAddress;
-    isBuyed = token.isBuyed;
-    isGived = token.isGived;
+    uint256 tokenId = getTokenId(_x, _y);
+    Land memory queryLand = _lands[tokenId];
+    if (queryLand.isBuyed) {
+      _land = queryLand;
+    } else {
+      _land = Land(_x, _y, "", address(0), address(0), false, false);
+    }
   }
 
-  function givedLand(address givedAddress)
+  function givedLand(address _givedAddress)
     external
     view
     override
-    returns (
-      int128 x,
-      int128 y,
-      string memory slogan,
-      address buyedAddress,
-      bool isBuyed,
-      bool isGived
-    )
+    returns (bool isGived, Land memory _land)
   {
-    uint256 tokenId = gived[givedAddress];
-    Token memory token = tokens[tokenId];
-    x = token.x;
-    y = token.y;
-    slogan = token.slogan;
-    buyedAddress = token.buyedAddress;
-    isBuyed = token.isBuyed;
-    isGived = token.isGived;
+    uint256 tokenId = _gived[_givedAddress];
+    Land memory queryLand = _lands[tokenId];
+    if (queryLand.givedAddress == _givedAddress) {
+      isGived = true;
+      _land = queryLand;
+    } else {
+      isGived = false;
+      _land = Land(0, 0, "", address(0), address(0), false, false);
+    }
+  }
+
+  function getBuyLands(address _buyedAddress)
+    external
+    view
+    override
+    returns (Land[] memory _buyLands)
+  {
+    uint256[] memory tokenIds = _buyLandTokenIds[_buyedAddress];
+    _buyLands = new Land[](tokenIds.length);
+    for (uint8 index = 0; index < tokenIds.length; index++) {
+      _buyLands[index] = _lands[tokenIds[index]];
+    }
   }
 
   function tokenURI(uint256 tokenId)
     public
     view
-    virtual
     override
     returns (string memory result)
   {
-    require(tokens[tokenId].isBuyed, "not buyed");
+    require(_lands[tokenId].isBuyed, "not buyed");
 
     (int128 x, int128 y) = getCoordinates(tokenId);
 
@@ -182,14 +164,14 @@ contract Land is ILand, ERC721Enumerable, Ownable {
     );
 
     string memory contentStr;
-    if (tokens[tokenId].isGived) {
+    if (_lands[tokenId].isGived) {
       string memory _solganStr;
-      if (bytes(tokens[tokenId].slogan).length == 0) {
+      if (bytes(_lands[tokenId].slogan).length == 0) {
         // TODO
         _solganStr = "<div>loot`s builder</div>";
       } else {
         _solganStr = string(
-          abi.encodePacked("<div>", tokens[tokenId].slogan, "</div>")
+          abi.encodePacked("<div>", _lands[tokenId].slogan, "</div>")
         );
       }
       contentStr = string(abi.encodePacked(_solganStr, _landStr));
