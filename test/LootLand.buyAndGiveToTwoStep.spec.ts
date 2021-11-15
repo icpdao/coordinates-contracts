@@ -7,6 +7,8 @@ import { LootLand } from "../typechain";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+const GAS_PRICE = 300000000;
+
 const expectLand = (
   land: any,
   landIsBuyed: any,
@@ -211,14 +213,13 @@ const exceptBuyCost = async (
   const buyBeforeEthCon = await ethers.provider.getBalance(contract.address);
   const buyBeforeEthW1 = await buyed.getBalance();
 
-  const gasPrice = 30000000;
   const result = await (
     await contract.connect(buyed).buy(x, y, {
       value: ethValue,
-      gasPrice: gasPrice,
+      gasPrice: GAS_PRICE,
     })
   ).wait();
-  const fee = result.gasUsed.mul(gasPrice);
+  const fee = result.gasUsed.mul(GAS_PRICE);
   const buyAfterEthW1 = await buyed.getBalance();
   const buyAfterEthCon = await ethers.provider.getBalance(contract.address);
 
@@ -230,13 +231,12 @@ const expectGetEth = async (contract: any, owner: any) => {
   const getEthBeforeEthCon = await ethers.provider.getBalance(contract.address);
   const getEthBeforeEthOwner = await owner.getBalance();
 
-  const gasPrice = 30000000;
   const result = await (
     await contract.connect(owner).getEth({
-      gasPrice: gasPrice,
+      gasPrice: GAS_PRICE,
     })
   ).wait();
-  const fee = result.gasUsed.mul(gasPrice);
+  const fee = result.gasUsed.mul(GAS_PRICE);
   const getEthAfterEthOwner = await owner.getBalance();
   const getEthAfterEthCon = await ethers.provider.getBalance(contract.address);
 
@@ -335,11 +335,5 @@ describe("LootLand.buyAndGiveToTwoStep", async () => {
       PRICE.mul(3)
     );
     await expectGetEth(landNFTToken, w1);
-
-    await (
-      await landNFTToken
-        .connect(w2)
-        .buyAndGiveTo(4, 4, w3.address, { value: PRICE })
-    ).wait();
   });
 });

@@ -199,7 +199,7 @@ const expectGetEth = async (contract: any, owner: any) => {
   );
 };
 
-describe("LandNFT", async () => {
+describe("LootLand.buyAndGiveToOneStep", async () => {
   it("buyAndGiveTo", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
       await ethers.getSigners();
@@ -252,7 +252,7 @@ describe("LandNFT", async () => {
   });
 
   it("buy cast eth", async () => {
-    const [w1, w2, w3] = await ethers.getSigners();
+    const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
 
@@ -272,7 +272,7 @@ describe("LandNFT", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE
     );
-    await exceptBuyCost(PRICE, landNFTToken, 2, 2, w1, w2.address, PRICE);
+    await exceptBuyCost(PRICE, landNFTToken, 2, 2, w1, w3.address, PRICE);
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)
     );
@@ -283,21 +283,13 @@ describe("LandNFT", async () => {
       3,
       3,
       w2,
-      w3.address,
+      w4.address,
       PRICE.add(100)
     );
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(3)
     );
-    await exceptBuyCost(
-      PRICE,
-      landNFTToken,
-      4,
-      4,
-      w2,
-      w3.address,
-      PRICE.add(100)
-    );
+    await exceptBuyCost(PRICE, landNFTToken, 4, 4, w2, w5.address, PRICE);
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(4)
     );

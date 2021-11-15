@@ -16,7 +16,10 @@ interface ILootLand {
   event GiveTo(int128 x, int128 y, address givedAddress);
   event SetSlogan(int128 x, int128 y, string slogan);
 
-  function buyLandCount(address buyedAddress) external returns (uint8 count);
+  function buyLandCount(address buyedAddress)
+    external
+    view
+    returns (uint8 count);
 
   function buy(int128 x, int128 y) external payable;
 

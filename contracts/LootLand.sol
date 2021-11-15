@@ -277,6 +277,11 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     );
     require(!_lands[tokenId].isGived, "token is gived");
 
+    require(
+      _lands[_gived[givedAddress]].givedAddress != givedAddress,
+      "givedAddress have gived land"
+    );
+
     _lands[tokenId].givedAddress = givedAddress;
     _lands[tokenId].isGived = true;
     _gived[givedAddress] = tokenId;
