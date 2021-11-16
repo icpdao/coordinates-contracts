@@ -27,35 +27,35 @@ describe("LootLand.tokenid", async () => {
 
     const dataList = [
       {
-        buyed: w1,
+        minted: w1,
         gived1: w2,
         gived1XY: coordinates[0],
         gived2: w3,
         gived2XY: coordinates[1],
       },
       {
-        buyed: w2,
+        minted: w2,
         gived1: w4,
         gived1XY: coordinates[2],
         gived2: w5,
         gived2XY: coordinates[3],
       },
       {
-        buyed: w3,
+        minted: w3,
         gived1: w6,
         gived1XY: coordinates[4],
         gived2: w7,
         gived2XY: coordinates[5],
       },
       {
-        buyed: w4,
+        minted: w4,
         gived1: w8,
         gived1XY: coordinates[6],
         gived2: w9,
         gived2XY: coordinates[7],
       },
       {
-        buyed: w5,
+        minted: w5,
         gived1: w10,
         gived1XY: coordinates[8],
         gived2: w11,
@@ -66,8 +66,8 @@ describe("LootLand.tokenid", async () => {
     for (let i = 0; i < dataList.length; i++) {
       await (
         await landNFTToken
-          .connect(dataList[i].buyed)
-          .buy2AndGiveTo(
+          .connect(dataList[i].minted)
+          .mint2AndGiveTo(
             dataList[i].gived1XY[0],
             dataList[i].gived1XY[1],
             dataList[i].gived1.address,
@@ -159,16 +159,16 @@ describe("LootLand.tokenid", async () => {
 
     // tokenId = await landNFTToken.getTokenId(1, 1);
     // content = await landNFTToken.tokenURI(tokenId);
-    // console.log("1,1 no buy", content);
+    // console.log("1,1 no mint", content);
 
     await (
       await landNFTToken
         .connect(w1)
-        .buy(100, -10, { value: BigNumber.from(10).pow(18) })
+        .mint(100, -10, { value: BigNumber.from(10).pow(18) })
     ).wait();
     tokenId = await landNFTToken.getTokenId(100, -10);
     content = await landNFTToken.tokenURI(tokenId);
-    console.log("100,-10 buy", content);
+    console.log("100,-10 mint", content);
 
     await (await landNFTToken.connect(w1).giveTo(100, -10, w2.address)).wait();
     tokenId = await landNFTToken.getTokenId(100, -10);

@@ -6,35 +6,35 @@ import { LootLand } from "../typechain";
 
 const GAS_PRICE = 3000000000;
 
-const exceptBuy2Cost = async (
+const exceptMint2Cost = async (
   price: any,
   contract: any,
   x1: any,
   y1: any,
   x2: any,
   y2: any,
-  buyed: any,
+  minted: any,
   gived1: any,
   gived2: any,
   ethValue: any
 ) => {
-  const buyBeforeEthCon = await ethers.provider.getBalance(contract.address);
-  const buyBeforeEthW1 = await buyed.getBalance();
+  const mintBeforeEthCon = await ethers.provider.getBalance(contract.address);
+  const mintBeforeEthW1 = await minted.getBalance();
 
   const result = await (
     await contract
-      .connect(buyed)
-      .buy2AndGiveTo(x1, y1, gived1.address, x2, y2, gived2.address, {
+      .connect(minted)
+      .mint2AndGiveTo(x1, y1, gived1.address, x2, y2, gived2.address, {
         value: ethValue,
         gasPrice: GAS_PRICE,
       })
   ).wait();
   const fee = result.gasUsed.mul(GAS_PRICE);
-  const buyAfterEthW1 = await buyed.getBalance();
-  const buyAfterEthCon = await ethers.provider.getBalance(contract.address);
+  const mintAfterEthW1 = await minted.getBalance();
+  const mintAfterEthCon = await ethers.provider.getBalance(contract.address);
 
-  expect(buyBeforeEthW1.sub(buyAfterEthW1)).eq(fee.add(price));
-  expect(buyAfterEthCon.sub(buyBeforeEthCon)).eq(price);
+  expect(mintBeforeEthW1.sub(mintAfterEthW1)).eq(fee.add(price));
+  expect(mintAfterEthCon.sub(mintBeforeEthCon)).eq(price);
 };
 
 const expectGetEth = async (contract: any, owner: any, value: any) => {
@@ -55,7 +55,7 @@ const expectGetEth = async (contract: any, owner: any, value: any) => {
 };
 
 describe("LootLand.getEth", async () => {
-  it("buy cast eth", async () => {
+  it("mint cast eth", async () => {
     const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
@@ -64,7 +64,7 @@ describe("LootLand.getEth", async () => {
 
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(0);
 
-    await exceptBuy2Cost(
+    await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
       1,
@@ -79,7 +79,7 @@ describe("LootLand.getEth", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)
     );
-    await exceptBuy2Cost(
+    await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
       3,
@@ -94,7 +94,7 @@ describe("LootLand.getEth", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(4)
     );
-    await exceptBuy2Cost(
+    await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
       5,

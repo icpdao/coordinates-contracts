@@ -14,16 +14,16 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   mapping(uint256 => uint256) private _packedXYToTokenId;
 
   // packedXY => bool
-  mapping(uint256 => bool) private _packedXYToIsBuyed;
+  mapping(uint256 => bool) private _packedXYToIsMinted;
 
   // givedAddress => tokenId
   mapping(address => uint256) private _gived;
 
-  // buyedAddress => buy land tokenids
-  mapping(address => uint256[]) private _buyLandTokenIds;
+  // mintedAddress => mint land tokenids
+  mapping(address => uint256[]) private _mintLandTokenIds;
 
-  // buyedAddress => buy count
-  mapping(address => uint8) public override buyLandCount;
+  // mintedAddress => mint count
+  mapping(address => uint8) public override mintLandCount;
 
   uint256 public constant PRICE = 4669201609102000 wei;
 
@@ -42,25 +42,25 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
     _lands.push(Land(0, 0, "", address(0), _owner, true, true));
     _gived[_owner] = 0;
-    _packedXYToIsBuyed[0] = true;
+    _packedXYToIsMinted[0] = true;
     _packedXYToTokenId[0] = 0;
     _safeMint(_owner, 0);
 
-    emit Buy(0, 0, address(0));
+    emit Mint(0, 0, address(0));
     emit GiveTo(0, 0, _owner);
   }
 
-  function buy(int128 x, int128 y) external payable override hasGived {
-    _buy(x, y);
+  function mint(int128 x, int128 y) external payable override hasGived {
+    _mint(x, y);
   }
 
-  function buy2(
+  function mint2(
     int128 x1,
     int128 y1,
     int128 x2,
     int128 y2
   ) external payable override hasGived {
-    _buy2(x1, y1, x2, y2);
+    _mint2(x1, y1, x2, y2);
   }
 
   function giveTo(
@@ -71,16 +71,16 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     _giveTo(x, y, givedAddress);
   }
 
-  function buyAndGiveTo(
+  function mintAndGiveTo(
     int128 x,
     int128 y,
     address givedAddress
   ) external payable override hasGived {
-    _buy(x, y);
+    _mint(x, y);
     _giveTo(x, y, givedAddress);
   }
 
-  function buy2AndGiveTo(
+  function mint2AndGiveTo(
     int128 x1,
     int128 y1,
     address givedAddress1,
@@ -88,7 +88,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     int128 y2,
     address givedAddress2
   ) external payable override hasGived {
-    _buy2(x1, y1, x2, y2);
+    _mint2(x1, y1, x2, y2);
     _giveTo(x1, y1, givedAddress1);
     _giveTo(x2, y2, givedAddress2);
   }
@@ -125,7 +125,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     returns (Land memory _land)
   {
     uint256 _packedXY = packedXY(_x, _y);
-    if (_packedXYToIsBuyed[_packedXY]) {
+    if (_packedXYToIsMinted[_packedXY]) {
       uint256 tokenId = _packedXYToTokenId[_packedXY];
       Land memory queryLand = _lands[tokenId];
       _land = queryLand;
@@ -151,16 +151,16 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     }
   }
 
-  function getBuyLands(address _buyedAddress)
+  function getMintLands(address _mintedAddress)
     external
     view
     override
-    returns (Land[] memory _buyLands)
+    returns (Land[] memory _mintLands)
   {
-    uint256[] memory tokenIds = _buyLandTokenIds[_buyedAddress];
-    _buyLands = new Land[](tokenIds.length);
+    uint256[] memory tokenIds = _mintLandTokenIds[_mintedAddress];
+    _mintLands = new Land[](tokenIds.length);
     for (uint8 index = 0; index < tokenIds.length; index++) {
-      _buyLands[index] = _lands[tokenIds[index]];
+      _mintLands[index] = _lands[tokenIds[index]];
     }
   }
 
@@ -173,7 +173,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     (int128 x, int128 y) = getCoordinates(tokenId);
 
     string memory _slogan;
-    if (!_lands[tokenId].isBuyed) {
+    if (!_lands[tokenId].isMinted) {
       _slogan = "Waiting for you";
     } else {
       _slogan = "Inviting the talented you to become a lootverse builder for the next 10 years, And For you on my side bought:";
@@ -200,7 +200,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
         "<div>Notes:</div>",
         "<div>- Lootland is created for builders</div>",
         "<div>- Only invited to be a builder</div>",
-        "<div>- Each builder can only buy two lands</div>",
+        "<div>- Each builder can only mint two lands</div>",
         "<div>- Only one person can be invited to each land</div>",
         "<div>- Each person can only accept an invitation once</div>",
         "<div>- Each land is 100*100 square meters</div>",
@@ -241,7 +241,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     returns (uint256 tokenId)
   {
     uint256 _packedXY = packedXY(x, y);
-    require(_packedXYToIsBuyed[_packedXY], "not buyed");
+    require(_packedXYToIsMinted[_packedXY], "not minted");
     tokenId = _packedXYToTokenId[_packedXY];
   }
 
@@ -318,8 +318,8 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     uint256 tokenId = getTokenId(x, y);
 
     require(
-      _lands[tokenId].buyedAddress == _msgSender(),
-      "caller didn't buyed this token"
+      _lands[tokenId].mintedAddress == _msgSender(),
+      "caller didn't minted this token"
     );
     require(!_lands[tokenId].isGived, "token is gived");
 
@@ -337,7 +337,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     emit GiveTo(x, y, givedAddress);
   }
 
-  function _buy2(
+  function _mint2(
     int128 x1,
     int128 y1,
     int128 x2,
@@ -345,40 +345,40 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   ) private {
     require(msg.value >= PRICE * 2, "eth too less");
 
-    _buyWithoutEth(x1, y1);
-    _buyWithoutEth(x2, y2);
+    _mintWithoutEth(x1, y1);
+    _mintWithoutEth(x2, y2);
 
     if (msg.value > PRICE * 2) {
       payable(_msgSender()).transfer(msg.value - PRICE * 2);
     }
   }
 
-  function _buy(int128 x, int128 y) private {
+  function _mint(int128 x, int128 y) private {
     require(msg.value >= PRICE, "eth too less");
 
-    _buyWithoutEth(x, y);
+    _mintWithoutEth(x, y);
 
     if (msg.value > PRICE) {
       payable(_msgSender()).transfer(msg.value - PRICE);
     }
   }
 
-  function _buyWithoutEth(int128 x, int128 y) private {
-    require(buyLandCount[_msgSender()] < 2, "caller is already buyed");
+  function _mintWithoutEth(int128 x, int128 y) private {
+    require(mintLandCount[_msgSender()] < 2, "caller is already minted");
 
     uint256 _packedXY = packedXY(x, y);
 
-    require(!_packedXYToIsBuyed[_packedXY], "land is buyed");
+    require(!_packedXYToIsMinted[_packedXY], "land is minted");
 
     _lands.push(Land(x, y, "", _msgSender(), address(0), true, false));
 
     uint256 newTokenId = _lands.length - 1;
-    _buyLandTokenIds[_msgSender()].push(newTokenId);
-    buyLandCount[_msgSender()] += 1;
+    _mintLandTokenIds[_msgSender()].push(newTokenId);
+    mintLandCount[_msgSender()] += 1;
 
     _packedXYToTokenId[_packedXY] = newTokenId;
-    _packedXYToIsBuyed[_packedXY] = true;
+    _packedXYToIsMinted[_packedXY] = true;
 
-    emit Buy(x, y, _msgSender());
+    emit Mint(x, y, _msgSender());
   }
 }

@@ -11,30 +11,30 @@ const GAS_PRICE = 300000000;
 
 const expectLand = (
   land: any,
-  landIsBuyed: any,
+  landIsMinted: any,
   landIsGived: any,
   x: any,
   y: any,
   slogan: any,
-  buyedAddress: any,
+  mintedAddress: any,
   givedAddress: any,
-  isBuyed: any,
+  isMinted: any,
   isGived: any
 ) => {
-  expect(landIsBuyed).eq(isBuyed);
+  expect(landIsMinted).eq(isMinted);
   expect(landIsGived).eq(isGived);
-  expect(land.isBuyed).eq(isBuyed);
+  expect(land.isMinted).eq(isMinted);
   expect(land.isGived).eq(isGived);
   expect(land.x).eq(x);
   expect(land.y).eq(y);
   expect(land.slogan).eq(slogan);
-  expect(land.buyedAddress).eq(buyedAddress);
+  expect(land.mintedAddress).eq(mintedAddress);
   expect(land.givedAddress).eq(givedAddress);
 };
 
-const exceptBuy2AndGiveTwoStep = async (
+const exceptMint2AndGiveTwoStep = async (
   landContract: LootLand,
-  buyed: SignerWithAddress,
+  minted: SignerWithAddress,
   gived1: SignerWithAddress,
   gived2: SignerWithAddress,
   x1: any,
@@ -43,9 +43,9 @@ const exceptBuy2AndGiveTwoStep = async (
   y2: any
 ) => {
   // expect
-  expect(await landContract.buyLandCount(buyed.address)).eq(0);
-  const buylands = await landContract.getBuyLands(buyed.address);
-  expect(buylands.length).eq(0);
+  expect(await landContract.mintLandCount(minted.address)).eq(0);
+  const mintlands = await landContract.getMintLands(minted.address);
+  expect(mintlands.length).eq(0);
 
   let [isGived1, land1] = await landContract.givedLand(gived1.address);
   expectLand(
@@ -77,7 +77,7 @@ const exceptBuy2AndGiveTwoStep = async (
   land1 = await landContract.land(x1, y1);
   expectLand(
     land1,
-    land1.isBuyed,
+    land1.isMinted,
     land1.isGived,
     x1,
     y1,
@@ -91,7 +91,7 @@ const exceptBuy2AndGiveTwoStep = async (
   land2 = await landContract.land(x2, y2);
   expectLand(
     land2,
-    land2.isBuyed,
+    land2.isMinted,
     land2.isGived,
     x2,
     y2,
@@ -104,28 +104,28 @@ const exceptBuy2AndGiveTwoStep = async (
 
   await expect(
     landContract.getTokenId(x1, y1)
-  ).to.be.revertedWith("not buyed");
+  ).to.be.revertedWith("not minted");
 
   await expect(
     landContract.getTokenId(x2, y2)
-  ).to.be.revertedWith("not buyed");
+  ).to.be.revertedWith("not minted");
 
-  // buy2
+  // mint2
   await (
     await landContract
-      .connect(buyed)
-      .buy2(x1, y1, x2, y2, { value: BigNumber.from(10).pow(18) })
+      .connect(minted)
+      .mint2(x1, y1, x2, y2, { value: BigNumber.from(10).pow(18) })
   ).wait();
   // expect
   land1 = await landContract.land(x1, y1);
   expectLand(
     land1,
-    land1.isBuyed,
+    land1.isMinted,
     land1.isGived,
     x1,
     y1,
     "",
-    buyed.address,
+    minted.address,
     ZERO_ADDRESS,
     true,
     false
@@ -134,12 +134,12 @@ const exceptBuy2AndGiveTwoStep = async (
   land2 = await landContract.land(x2, y2);
   expectLand(
     land2,
-    land2.isBuyed,
+    land2.isMinted,
     land2.isGived,
     x2,
     y2,
     "",
-    buyed.address,
+    minted.address,
     ZERO_ADDRESS,
     true,
     false
@@ -152,27 +152,27 @@ const exceptBuy2AndGiveTwoStep = async (
     landContract.ownerOf(await landContract.getTokenId(x2, y2))
   ).to.be.revertedWith("ERC721: owner query for nonexistent token");
 
-  expect(await landContract.buyLandCount(buyed.address)).eq(2);
-  const buylands2 = await landContract.getBuyLands(buyed.address);
-  expect(buylands2.length).eq(2);
+  expect(await landContract.mintLandCount(minted.address)).eq(2);
+  const mintlands2 = await landContract.getMintLands(minted.address);
+  expect(mintlands2.length).eq(2);
 
-  expect(buylands2[0].x).eq(x1);
-  expect(buylands2[0].y).eq(y1);
-  expect(buylands2[0].buyedAddress).eq(buyed.address);
-  expect(buylands2[0].givedAddress).eq(ZERO_ADDRESS);
-  expect(buylands2[0].isBuyed).eq(true);
-  expect(buylands2[0].isGived).eq(false);
+  expect(mintlands2[0].x).eq(x1);
+  expect(mintlands2[0].y).eq(y1);
+  expect(mintlands2[0].mintedAddress).eq(minted.address);
+  expect(mintlands2[0].givedAddress).eq(ZERO_ADDRESS);
+  expect(mintlands2[0].isMinted).eq(true);
+  expect(mintlands2[0].isGived).eq(false);
 
-  expect(buylands2[1].x).eq(x2);
-  expect(buylands2[1].y).eq(y2);
-  expect(buylands2[1].buyedAddress).eq(buyed.address);
-  expect(buylands2[1].givedAddress).eq(ZERO_ADDRESS);
-  expect(buylands2[1].isBuyed).eq(true);
-  expect(buylands2[1].isGived).eq(false);
+  expect(mintlands2[1].x).eq(x2);
+  expect(mintlands2[1].y).eq(y2);
+  expect(mintlands2[1].mintedAddress).eq(minted.address);
+  expect(mintlands2[1].givedAddress).eq(ZERO_ADDRESS);
+  expect(mintlands2[1].isMinted).eq(true);
+  expect(mintlands2[1].isGived).eq(false);
 
   // give1
   await (
-    await landContract.connect(buyed).giveTo(x1, y1, gived1.address)
+    await landContract.connect(minted).giveTo(x1, y1, gived1.address)
   ).wait();
 
   // expect
@@ -183,12 +183,12 @@ const exceptBuy2AndGiveTwoStep = async (
   land1 = await landContract.land(x1, y1);
   expectLand(
     land1,
-    land1.isBuyed,
+    land1.isMinted,
     land1.isGived,
     x1,
     y1,
     "",
-    buyed.address,
+    minted.address,
     gived1.address,
     true,
     true
@@ -202,33 +202,33 @@ const exceptBuy2AndGiveTwoStep = async (
     x1,
     y1,
     "",
-    buyed.address,
+    minted.address,
     gived1.address,
     true,
     true
   );
 
-  expect(await landContract.buyLandCount(buyed.address)).eq(2);
-  const buylands3 = await landContract.getBuyLands(buyed.address);
-  expect(buylands3.length).eq(2);
+  expect(await landContract.mintLandCount(minted.address)).eq(2);
+  const mintlands3 = await landContract.getMintLands(minted.address);
+  expect(mintlands3.length).eq(2);
 
-  expect(buylands3[0].x).eq(x1);
-  expect(buylands3[0].y).eq(y1);
-  expect(buylands3[0].buyedAddress).eq(buyed.address);
-  expect(buylands3[0].givedAddress).eq(gived1.address);
-  expect(buylands3[0].isBuyed).eq(true);
-  expect(buylands3[0].isGived).eq(true);
+  expect(mintlands3[0].x).eq(x1);
+  expect(mintlands3[0].y).eq(y1);
+  expect(mintlands3[0].mintedAddress).eq(minted.address);
+  expect(mintlands3[0].givedAddress).eq(gived1.address);
+  expect(mintlands3[0].isMinted).eq(true);
+  expect(mintlands3[0].isGived).eq(true);
 
-  expect(buylands3[1].x).eq(x2);
-  expect(buylands3[1].y).eq(y2);
-  expect(buylands3[1].buyedAddress).eq(buyed.address);
-  expect(buylands2[1].givedAddress).eq(ZERO_ADDRESS);
-  expect(buylands3[1].isBuyed).eq(true);
-  expect(buylands3[1].isGived).eq(false);
+  expect(mintlands3[1].x).eq(x2);
+  expect(mintlands3[1].y).eq(y2);
+  expect(mintlands3[1].mintedAddress).eq(minted.address);
+  expect(mintlands2[1].givedAddress).eq(ZERO_ADDRESS);
+  expect(mintlands3[1].isMinted).eq(true);
+  expect(mintlands3[1].isGived).eq(false);
 
   // give2
   await (
-    await landContract.connect(buyed).giveTo(x2, y2, gived2.address)
+    await landContract.connect(minted).giveTo(x2, y2, gived2.address)
   ).wait();
 
   // expect
@@ -239,12 +239,12 @@ const exceptBuy2AndGiveTwoStep = async (
   land2 = await landContract.land(x2, y2);
   expectLand(
     land2,
-    land2.isBuyed,
+    land2.isMinted,
     land2.isGived,
     x2,
     y2,
     "",
-    buyed.address,
+    minted.address,
     gived2.address,
     true,
     true
@@ -258,56 +258,56 @@ const exceptBuy2AndGiveTwoStep = async (
     x2,
     y2,
     "",
-    buyed.address,
+    minted.address,
     gived2.address,
     true,
     true
   );
 
-  expect(await landContract.buyLandCount(buyed.address)).eq(2);
-  const buylands4 = await landContract.getBuyLands(buyed.address);
-  expect(buylands4.length).eq(2);
+  expect(await landContract.mintLandCount(minted.address)).eq(2);
+  const mintlands4 = await landContract.getMintLands(minted.address);
+  expect(mintlands4.length).eq(2);
 
-  expect(buylands4[0].x).eq(x1);
-  expect(buylands4[0].y).eq(y1);
-  expect(buylands4[0].buyedAddress).eq(buyed.address);
-  expect(buylands4[0].givedAddress).eq(gived1.address);
-  expect(buylands4[0].isBuyed).eq(true);
-  expect(buylands4[0].isGived).eq(true);
+  expect(mintlands4[0].x).eq(x1);
+  expect(mintlands4[0].y).eq(y1);
+  expect(mintlands4[0].mintedAddress).eq(minted.address);
+  expect(mintlands4[0].givedAddress).eq(gived1.address);
+  expect(mintlands4[0].isMinted).eq(true);
+  expect(mintlands4[0].isGived).eq(true);
 
-  expect(buylands4[1].x).eq(x2);
-  expect(buylands4[1].y).eq(y2);
-  expect(buylands4[1].buyedAddress).eq(buyed.address);
-  expect(buylands4[1].givedAddress).eq(gived2.address);
-  expect(buylands4[1].isBuyed).eq(true);
-  expect(buylands4[1].isGived).eq(true);
+  expect(mintlands4[1].x).eq(x2);
+  expect(mintlands4[1].y).eq(y2);
+  expect(mintlands4[1].mintedAddress).eq(minted.address);
+  expect(mintlands4[1].givedAddress).eq(gived2.address);
+  expect(mintlands4[1].isMinted).eq(true);
+  expect(mintlands4[1].isGived).eq(true);
 };
 
-const exceptBuy2Cost = async (
+const exceptMint2Cost = async (
   price: any,
   contract: any,
   x1: any,
   y1: any,
   x2: any,
   y2: any,
-  buyed: any,
+  minted: any,
   ethValue: any
 ) => {
-  const buyBeforeEthCon = await ethers.provider.getBalance(contract.address);
-  const buyBeforeEthW1 = await buyed.getBalance();
+  const mintBeforeEthCon = await ethers.provider.getBalance(contract.address);
+  const mintBeforeEthW1 = await minted.getBalance();
 
   const result = await (
-    await contract.connect(buyed).buy2(x1, y1, x2, y2, {
+    await contract.connect(minted).mint2(x1, y1, x2, y2, {
       value: ethValue,
       gasPrice: GAS_PRICE,
     })
   ).wait();
   const fee = result.gasUsed.mul(GAS_PRICE);
-  const buyAfterEthW1 = await buyed.getBalance();
-  const buyAfterEthCon = await ethers.provider.getBalance(contract.address);
+  const mintAfterEthW1 = await minted.getBalance();
+  const mintAfterEthCon = await ethers.provider.getBalance(contract.address);
 
-  expect(buyBeforeEthW1.sub(buyAfterEthW1)).eq(fee.add(price));
-  expect(buyAfterEthCon.sub(buyBeforeEthCon)).eq(price);
+  expect(mintBeforeEthW1.sub(mintAfterEthW1)).eq(fee.add(price));
+  expect(mintAfterEthCon.sub(mintBeforeEthCon)).eq(price);
 };
 
 const expectGetEth = async (contract: any, owner: any) => {
@@ -329,8 +329,8 @@ const expectGetEth = async (contract: any, owner: any) => {
   );
 };
 
-describe("LootLand.buy2AndGiveToTwoStep", async () => {
-  it("buy and give to", async () => {
+describe("LootLand.mint2AndGiveToTwoStep", async () => {
+  it("mint and give to", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
       await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
@@ -339,7 +339,7 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
     expectLand(
       givedLandW1,
-      givedLandW1.isBuyed,
+      givedLandW1.isMinted,
       isGived,
       0,
       0,
@@ -353,12 +353,12 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
       w1.address
     );
 
-    await exceptBuy2AndGiveTwoStep(landNFTToken, w1, w2, w3, 1, -2, 2, -3);
-    await exceptBuy2AndGiveTwoStep(landNFTToken, w2, w4, w5, 3, -4, 4, -5);
-    await exceptBuy2AndGiveTwoStep(landNFTToken, w3, w6, w7, 5, -6, 6, -7);
-    await exceptBuy2AndGiveTwoStep(landNFTToken, w4, w8, w9, 7, -8, 8, -9);
-    await exceptBuy2AndGiveTwoStep(landNFTToken, w5, w10, w11, 9, -10, 10, -11);
-    await exceptBuy2AndGiveTwoStep(
+    await exceptMint2AndGiveTwoStep(landNFTToken, w1, w2, w3, 1, -2, 2, -3);
+    await exceptMint2AndGiveTwoStep(landNFTToken, w2, w4, w5, 3, -4, 4, -5);
+    await exceptMint2AndGiveTwoStep(landNFTToken, w3, w6, w7, 5, -6, 6, -7);
+    await exceptMint2AndGiveTwoStep(landNFTToken, w4, w8, w9, 7, -8, 8, -9);
+    await exceptMint2AndGiveTwoStep(landNFTToken, w5, w10, w11, 9, -10, 10, -11);
+    await exceptMint2AndGiveTwoStep(
       landNFTToken,
       w6,
       w12,
@@ -368,7 +368,7 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
       12,
       -13
     );
-    await exceptBuy2AndGiveTwoStep(
+    await exceptMint2AndGiveTwoStep(
       landNFTToken,
       w7,
       w14,
@@ -380,7 +380,7 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
     );
   });
 
-  it("buy cast eth", async () => {
+  it("mint cast eth", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
@@ -389,7 +389,7 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
 
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(0);
 
-    await exceptBuy2Cost(
+    await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
       1,
@@ -404,7 +404,7 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
     );
     await (await landNFTToken.connect(w1).giveTo(1, 1, w2.address)).wait();
     await (await landNFTToken.connect(w1).giveTo(2, 2, w3.address)).wait();
-    await exceptBuy2Cost(
+    await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
       3,
@@ -417,7 +417,7 @@ describe("LootLand.buy2AndGiveToTwoStep", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(4)
     );
-    await exceptBuy2Cost(
+    await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
       5,

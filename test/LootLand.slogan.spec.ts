@@ -22,7 +22,7 @@ describe("LootLand.slogan", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .buy(100, -10, { value: BigNumber.from(10).pow(18) })
+        .mint(100, -10, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     expect((await landNFTToken.land(100, -10)).slogan).eq("");

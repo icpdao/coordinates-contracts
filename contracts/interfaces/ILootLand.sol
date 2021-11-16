@@ -6,24 +6,24 @@ interface ILootLand {
     int128 x;
     int128 y;
     string slogan;
-    address buyedAddress;
+    address mintedAddress;
     address givedAddress;
-    bool isBuyed;
+    bool isMinted;
     bool isGived;
   }
 
-  event Buy(int128 x, int128 y, address buyedAddress);
+  event Mint(int128 x, int128 y, address mintedAddress);
   event GiveTo(int128 x, int128 y, address givedAddress);
   event SetSlogan(int128 x, int128 y, string slogan);
 
-  function buyLandCount(address buyedAddress)
+  function mintLandCount(address mintedAddress)
     external
     view
     returns (uint8 count);
 
-  function buy(int128 x, int128 y) external payable;
+  function mint(int128 x, int128 y) external payable;
 
-  function buy2(
+  function mint2(
     int128 x1,
     int128 y1,
     int128 x2,
@@ -36,13 +36,13 @@ interface ILootLand {
     address givedAddress
   ) external;
 
-  function buyAndGiveTo(
+  function mintAndGiveTo(
     int128 x,
     int128 y,
     address givedAddress
   ) external payable;
 
-  function buy2AndGiveTo(
+  function mint2AndGiveTo(
     int128 x1,
     int128 y1,
     address givedAddress1,
@@ -68,7 +68,7 @@ interface ILootLand {
     view
     returns (bool isGived, Land memory token);
 
-  function getBuyLands(address _buyedAddress)
+  function getMintLands(address _mintedAddress)
     external
     view
     returns (Land[] memory _token);
