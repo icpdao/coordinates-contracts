@@ -266,6 +266,21 @@ describe("LootLand.buyAndGiveToTwoStep", async () => {
       true,
       true
     );
+
+    const land0 = await landNFTToken.land(0, 0);
+    expectLand(
+      land0,
+      land0.isBuyed,
+      land0.isGived,
+      0,
+      0,
+      "",
+      ZERO_ADDRESS,
+      w1.address,
+      true,
+      true
+    );
+
     expect(await landNFTToken.ownerOf(await landNFTToken.getTokenId(0, 0))).eq(
       w1.address
     );
