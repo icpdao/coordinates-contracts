@@ -173,12 +173,13 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     (int128 x, int128 y) = getCoordinates(tokenId);
 
     string memory _slogan;
-    if (!_lands[tokenId].isMinted) {
-      _slogan = "Waiting for you";
+    if (!_lands[tokenId].isGived) {
+      _slogan = "YOU are invited to BE a lootverse builder for the next 10 years!<br/>To Make It Happen I minted:";
     } else {
-      _slogan = "Inviting the talented you to become a lootverse builder for the next 10 years, And For you on my side bought:";
-      if (_lands[tokenId].isGived && bytes(_lands[tokenId].slogan).length > 0) {
+      if (bytes(_lands[tokenId].slogan).length > 0) {
         _slogan = _lands[tokenId].slogan;
+      } else {
+        _slogan = "<br/><br/>I'm this Builder  ^_^";
       }
     }
 
@@ -197,20 +198,22 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     string memory _notesStr = string(
       abi.encodePacked(
         '<div class="notes">',
-        "<div>Notes:</div>",
-        "<div>- Lootland is created for builders</div>",
-        "<div>- Only invited to be a builder</div>",
-        "<div>- Each builder can only mint two lands</div>",
-        "<div>- Only one person can be invited to each land</div>",
+        "<div>Rules:</div>",
+        "<div>- Lootland is the home of builders!</div>",
+        "<div>- Builders are invited-only!</div>",
+        "<div>- Each builder can mint at most two piece of land</div>",
+        "<div>- The minted lands can only be used for invitations</div>",
+        "<div>- Only one person can be invited to each piece of land</div>",
         "<div>- Each person can only accept an invitation once</div>",
-        "<div>- Each land is 100*100 square meters</div>",
+        "<div>- Each piece of land is 100*100 square meters</div>",
+        "<div>- Can set Slogan on the land</div>",
         "</div>"
       )
     );
 
     string memory svgStr = string(
       abi.encodePacked(
-        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 360 360"><rect width="100%" height="100%" fill="#0F4C81" /><foreignObject width="360" height="360" x="0" y="0"><body xmlns="http://www.w3.org/1999/xhtml"><style>.base {font-family:sans-serif;margin:10px;}.sologan { color: #F0EDE5; font-size: 18px;margin-top:30px;height: 90px; }.land { color: #C0D725; font-size: 24px; height: 60px; }.notes { color: #A5B8D0; font-size: 14px; }</style><div class="base">',
+        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 360 360"><rect width="100%" height="100%" fill="#0F4C81" /><foreignObject width="360" height="360" x="0" y="0"><body xmlns="http://www.w3.org/1999/xhtml"><style>.base {font-family:sans-serif;margin:10px;}.sologan { color: #F0EDE5; font-size: 16px;margin-top:30px;height: 90px; }.land { color: #C0D725; font-size: 24px; height: 60px; }.notes { color: #A5B8D0; font-size: 12px; }</style><div class="base">',
         _sloganStr,
         _landStr,
         _notesStr,
@@ -224,7 +227,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
           abi.encodePacked(
             '{"name": "Land #',
             Strings.toString(tokenId),
-            '", "description": "xxxxx", "image": "data:image/svg+xml;base64,',
+            '", "description": "The convergence of builders can create wonderful worlds, and lootland is their home.", "image": "data:image/svg+xml;base64,',
             Base64.encode(bytes(svgStr)),
             '"}'
           )
