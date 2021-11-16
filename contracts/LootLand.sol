@@ -229,7 +229,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
           abi.encodePacked(
             '{"name": "Land #',
             Strings.toString(tokenId),
-            '", "description": "The convergence of builders can create wonderful worlds, and lootland is their home.", "image": "data:image/svg+xml;base64,',
+            '", "description": "Imagine a world without authority,Imagine everyone can create freely,You may say I am a dreamer,But I am not the only one,I hope someday you will join us.", "image": "data:image/svg+xml;base64,',
             Base64.encode(bytes(svgStr)),
             '"}'
           )
