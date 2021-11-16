@@ -56,12 +56,14 @@ const expectGetEth = async (contract: any, owner: any, value: any) => {
 
 describe("LootLand.getEth", async () => {
   it("mint cast eth", async () => {
-    const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
+    const [deploy, owner, startUp, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(
-      w1.address,
-      w1.address
+    const landNFTToken = (await LandNFTFactory.connect(deploy).deploy(
+      owner.address,
+      startUp.address
     )) as LootLand;
+
+    expect(await landNFTToken.owner()).eq(owner.address);
 
     const PRICE = await landNFTToken.PRICE();
 
@@ -74,7 +76,7 @@ describe("LootLand.getEth", async () => {
       1,
       2,
       2,
-      w1,
+      startUp,
       w2,
       w3,
       BigNumber.from(10).pow(18)
@@ -112,8 +114,8 @@ describe("LootLand.getEth", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(6)
     );
-    await expectGetEth(landNFTToken, w1, PRICE.mul(4));
-    await expectGetEth(landNFTToken, w1, PRICE.mul(2));
+    await expectGetEth(landNFTToken, owner, PRICE.mul(4));
+    await expectGetEth(landNFTToken, owner, PRICE.mul(2));
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       0
     );

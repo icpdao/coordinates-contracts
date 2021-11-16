@@ -248,13 +248,14 @@ const expectGetEth = async (contract: any, owner: any) => {
 
 describe("LootLand.mintAndGiveToTwoStep", async () => {
   it("mint and give to", async () => {
-    const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
-      await ethers.getSigners();
+    const [deployAcc, owner, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =  await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(
-      w1.address,
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
       w1.address
     )) as LootLand;
+
+    expect(await landNFTToken.owner()).eq(owner.address);
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
     expectLand(
