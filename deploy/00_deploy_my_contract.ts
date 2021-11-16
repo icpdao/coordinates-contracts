@@ -13,7 +13,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         from: deployer,
         args: [owner],
         log: true,
-        gasPrice: BigNumber.from(10).pow(9).mul(112)
+        gasPrice: BigNumber.from(10).pow(9).mul(80)
     });
 };
 

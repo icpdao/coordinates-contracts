@@ -4,11 +4,13 @@ import { BigNumber } from "ethers";
 import { LootLand } from "../typechain";
 
 describe("LootLand.mint.error", async () => {
-
   it("no role", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     await expect(landNFTToken.connect(w2).mint(1, 1)).to.revertedWith(
       "caller is no gived"
@@ -18,7 +20,10 @@ describe("LootLand.mint.error", async () => {
   it("mint three", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address,
+    )) as LootLand;
 
     await (
       await landNFTToken
@@ -56,7 +61,10 @@ describe("LootLand.mint.error", async () => {
   it("mint repeat", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address,
+    )) as LootLand;
     await expect(
       landNFTToken.connect(w1).mint(0, 0, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is minted");
@@ -116,7 +124,10 @@ describe("LootLand.mint.error", async () => {
   it("mint gived", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     await (
       await landNFTToken

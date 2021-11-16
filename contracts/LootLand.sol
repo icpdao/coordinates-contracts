@@ -36,18 +36,20 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     _;
   }
 
-  constructor(address _owner) ERC721("Land", "LAND") Ownable() {
-    // TODO owner 问题
+  constructor(address _owner, address _startUp)
+    ERC721("Land", "LAND")
+    Ownable()
+  {
     transferOwnership(_owner);
 
-    _lands.push(Land(0, 0, "", address(0), _owner, true, true));
-    _gived[_owner] = 0;
+    _lands.push(Land(0, 0, "", address(0), _startUp, true, true));
+    _gived[_startUp] = 0;
     _packedXYToIsMinted[0] = true;
     _packedXYToTokenId[0] = 0;
-    _safeMint(_owner, 0);
+    _safeMint(_startUp, 0);
 
     emit Mint(0, 0, address(0));
-    emit GiveTo(0, 0, _owner);
+    emit GiveTo(0, 0, _startUp);
   }
 
   function mint(int128 x, int128 y) external payable override hasGived {

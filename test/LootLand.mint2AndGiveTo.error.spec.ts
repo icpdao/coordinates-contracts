@@ -7,7 +7,10 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
   it("no role", async () => {
     const [w1, w2, w3, w4] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     await expect(
       landNFTToken
@@ -19,7 +22,10 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
   it("mint2AndGiveTo three", async () => {
     const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     await (
       await landNFTToken
@@ -51,7 +57,10 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
   it("mintAndGiveTo three", async () => {
     const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     await (
       await landNFTToken
@@ -79,5 +88,4 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
         })
     ).to.revertedWith("caller is already minted");
   });
-
 });

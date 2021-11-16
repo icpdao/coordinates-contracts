@@ -251,7 +251,10 @@ describe("LootLand.mintAndGiveToTwoStep", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
       await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
     expectLand(
@@ -324,7 +327,10 @@ describe("LootLand.mintAndGiveToTwoStep", async () => {
   it("mint cast eth", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     const PRICE = await landNFTToken.PRICE();
 

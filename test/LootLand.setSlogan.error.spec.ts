@@ -7,7 +7,10 @@ describe("LootLand.setSlogan.error", async () => {
   it("not owner", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     await expect(
       landNFTToken.connect(w1).setSlogan(2, 2, "123")

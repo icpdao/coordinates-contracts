@@ -9,7 +9,11 @@ describe("LootLand.slogan", async () => {
   it("token uri", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
+
     expect((await landNFTToken.land(0, 0)).slogan).eq("");
 
     await (

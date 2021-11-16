@@ -7,7 +7,10 @@ describe("LootLand.tokenid", async () => {
   it("generate tokenid", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
     const INT128_MAX = BigNumber.from(2).pow(127).sub(1);
@@ -101,7 +104,10 @@ describe("LootLand.tokenid", async () => {
   it("coordinates string", async () => {
     const [w1] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
     const INT128_MAX = BigNumber.from(2).pow(127).sub(1);
@@ -151,7 +157,10 @@ describe("LootLand.tokenid", async () => {
   it("token uri", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     let tokenId = await landNFTToken.getTokenId(0, 0);
     let content = await landNFTToken.tokenURI(tokenId);

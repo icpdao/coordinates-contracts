@@ -41,7 +41,10 @@ describe("LootLand.getEth.error", async () => {
   it("not owner", async () => {
     const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
 
     const PRICE = await landNFTToken.PRICE();
 
