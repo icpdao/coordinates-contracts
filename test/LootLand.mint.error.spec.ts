@@ -57,7 +57,9 @@ describe("LootLand.mint.error", async () => {
     const [w1, w2] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
-
+    await expect(
+      landNFTToken.connect(w1).mint(0, 0, { value: BigNumber.from(10).pow(18) })
+    ).to.revertedWith("land is minted");
     await (
       await landNFTToken
         .connect(w1)
@@ -65,6 +67,9 @@ describe("LootLand.mint.error", async () => {
     ).wait();
     await expect(
       landNFTToken.connect(w1).mint(1, 1, { value: BigNumber.from(10).pow(18) })
+    ).to.revertedWith("land is minted");
+    await expect(
+      landNFTToken.connect(w1).mint(0, 0, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is minted");
     await (
       await landNFTToken
