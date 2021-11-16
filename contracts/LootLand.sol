@@ -8,8 +8,13 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./interfaces/ILootLand.sol";
 
 contract LootLand is ILootLand, ERC721Enumerable, Ownable {
-  // tokenid => TOKEN
-  mapping(uint256 => Land) private _lands;
+  Land[] private _lands;
+
+  // packedXY => tokenId
+  mapping(uint256 => uint256) private _packedXYToTokenId;
+
+  // packedXY => bool
+  mapping(uint256 => bool) private _packedXYToIsBuyed;
 
   // givedAddress => tokenId
   mapping(address => uint256) private _gived;
@@ -34,10 +39,12 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   constructor(address _owner) ERC721("Land", "LAND") Ownable() {
     // TODO owner 问题
     transferOwnership(_owner);
-    uint256 tokenId = getTokenId(0, 0);
-    _lands[tokenId] = Land(0, 0, "", address(0), _owner, true, true);
-    _gived[_owner] = tokenId;
-    _safeMint(_owner, tokenId);
+
+    _lands.push(Land(0, 0, "", address(0), _owner, true, true));
+    _gived[_owner] = 0;
+    _packedXYToIsBuyed[0] = true;
+    _packedXYToTokenId[0] = 0;
+    _safeMint(_owner, 0);
 
     emit Buy(0, 0, address(0));
     emit GiveTo(0, 0, _owner);
@@ -117,9 +124,10 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     override
     returns (Land memory _land)
   {
-    uint256 tokenId = getTokenId(_x, _y);
-    Land memory queryLand = _lands[tokenId];
-    if (queryLand.isBuyed) {
+    uint256 _packedXY = packedXY(_x, _y);
+    if (_packedXYToIsBuyed[_packedXY]) {
+      uint256 tokenId = _packedXYToTokenId[_packedXY];
+      Land memory queryLand = _lands[tokenId];
       _land = queryLand;
     } else {
       _land = Land(_x, _y, "", address(0), address(0), false, false);
@@ -228,23 +236,35 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
   function getTokenId(int128 x, int128 y)
     public
-    pure
+    view
     override
     returns (uint256 tokenId)
   {
+    uint256 _packedXY = packedXY(x, y);
+    require(_packedXYToIsBuyed[_packedXY], "not buyed");
+    tokenId = _packedXYToTokenId[_packedXY];
+  }
+
+  function packedXY(int128 x, int128 y)
+    public
+    pure
+    override
+    returns (uint256 _packedXY)
+  {
     bytes32 xx = bytes16(uint128(x));
     bytes32 yy = bytes16(uint128(y));
-    tokenId = uint256(xx | (yy >> 128));
+    _packedXY = uint256(xx | (yy >> 128));
   }
 
   function getCoordinates(uint256 tokenId)
     public
-    pure
+    view
     override
     returns (int128 x, int128 y)
   {
-    x = int128(uint128(tokenId >> 128));
-    y = int128(uint128(tokenId));
+    require(tokenId < _lands.length, "not exists");
+    x = _lands[tokenId].x;
+    y = _lands[tokenId].y;
   }
 
   function getCoordinatesString(int128 x, int128 y)
@@ -346,14 +366,18 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   function _buyWithoutEth(int128 x, int128 y) private {
     require(buyLandCount[_msgSender()] < 2, "caller is already buyed");
 
-    uint256 tokenId = getTokenId(x, y);
+    uint256 _packedXY = packedXY(x, y);
 
-    require(!_lands[tokenId].isBuyed, "land is buyed");
+    require(!_packedXYToIsBuyed[_packedXY], "land is buyed");
 
-    _lands[tokenId] = Land(x, y, "", _msgSender(), address(0), true, false);
+    _lands.push(Land(x, y, "", _msgSender(), address(0), true, false));
 
-    _buyLandTokenIds[_msgSender()].push(tokenId);
+    uint256 newTokenId = _lands.length - 1;
+    _buyLandTokenIds[_msgSender()].push(newTokenId);
     buyLandCount[_msgSender()] += 1;
+
+    _packedXYToTokenId[_packedXY] = newTokenId;
+    _packedXYToIsBuyed[_packedXY] = true;
 
     emit Buy(x, y, _msgSender());
   }

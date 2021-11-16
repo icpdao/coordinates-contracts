@@ -75,16 +75,21 @@ interface ILootLand {
 
   function getTokenId(int128 x, int128 y)
     external
-    pure
+    view
     returns (uint256 tokenId);
 
   function getCoordinates(uint256 tokenId)
     external
-    pure
+    view
     returns (int128 x, int128 y);
 
   function getCoordinatesString(int128 x, int128 y)
     external
     pure
     returns (string memory data);
+
+  function packedXY(int128 x, int128 y)
+    external
+    pure
+    returns (uint256 _packedXY);
 }

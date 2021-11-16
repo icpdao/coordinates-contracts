@@ -3,42 +3,98 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { LootLand } from "../typechain";
 
-
 describe("LootLand.tokenid", async () => {
-  it("token and coordinates", async () => {
-    const [w1] = await ethers.getSigners();
+  it("generate tokenid", async () => {
+    const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(w1.address)) as LootLand;
 
     const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
     const INT128_MAX = BigNumber.from(2).pow(127).sub(1);
 
-    const dataList = [
-      [0, 0],
+    const coordinates = [
       [10, 11],
       [0, -10],
       [10, 0],
       [-10, 0],
       [0, 10],
-      [-10, -10],
-      [-10, 10],
-      [10, -10],
+      [-11, -10],
+      [-10, 11],
+      [11, -10],
       [INT128_MIN, INT128_MAX],
       [INT128_MAX, INT128_MIN],
     ];
 
+    const dataList = [
+      {
+        buyed: w1,
+        gived1: w2,
+        gived1XY: coordinates[0],
+        gived2: w3,
+        gived2XY: coordinates[1],
+      },
+      {
+        buyed: w2,
+        gived1: w4,
+        gived1XY: coordinates[2],
+        gived2: w5,
+        gived2XY: coordinates[3],
+      },
+      {
+        buyed: w3,
+        gived1: w6,
+        gived1XY: coordinates[4],
+        gived2: w7,
+        gived2XY: coordinates[5],
+      },
+      {
+        buyed: w4,
+        gived1: w8,
+        gived1XY: coordinates[6],
+        gived2: w9,
+        gived2XY: coordinates[7],
+      },
+      {
+        buyed: w5,
+        gived1: w10,
+        gived1XY: coordinates[8],
+        gived2: w11,
+        gived2XY: coordinates[9],
+      },
+    ];
+
     for (let i = 0; i < dataList.length; i++) {
-      const ix = dataList[i][0];
-      const iy = dataList[i][1];
-      const tokenId = await landNFTToken.getTokenId(ix, iy);
-      const { x: rx, y: ry } = await landNFTToken.getCoordinates(tokenId);
-      expect(rx).to.eq(ix);
-      expect(ry).to.eq(iy);
-      const rTokenId = await landNFTToken.getTokenId(rx, ry);
-      expect(tokenId).to.eq(rTokenId);
-      // console.log("tokenId", tokenId);
-      // console.log("ix, iy", ix, iy);
-      // console.log("rx, ry", rx, ry);
+      await (
+        await landNFTToken
+          .connect(dataList[i].buyed)
+          .buy2AndGiveTo(
+            dataList[i].gived1XY[0],
+            dataList[i].gived1XY[1],
+            dataList[i].gived1.address,
+            dataList[i].gived2XY[0],
+            dataList[i].gived2XY[1],
+            dataList[i].gived2.address,
+            { value: BigNumber.from(10).pow(18) }
+          )
+      ).wait();
+    }
+
+    const [rx, ry] = await landNFTToken.getCoordinates(0);
+    expect(rx).eq(0);
+    expect(ry).eq(0);
+
+    const rtokenId = await landNFTToken.getTokenId(0, 0);
+    expect(rtokenId).eq(0);
+    for (let i = 0; i < coordinates.length; i++) {
+      const tokenId = i + 1;
+      const x = coordinates[i][0];
+      const y = coordinates[i][1];
+      const [rx, ry] = await landNFTToken.getCoordinates(tokenId);
+      expect(rx).eq(x);
+      expect(ry).eq(y);
+
+      const rtokenId = await landNFTToken.getTokenId(x, y);
+      expect(rtokenId).eq(tokenId);
     }
   });
 
@@ -101,9 +157,9 @@ describe("LootLand.tokenid", async () => {
     let content = await landNFTToken.tokenURI(tokenId);
     console.log("0,0", content);
 
-    tokenId = await landNFTToken.getTokenId(1, 1);
-    content = await landNFTToken.tokenURI(tokenId);
-    console.log("1,1 no buy", content);
+    // tokenId = await landNFTToken.getTokenId(1, 1);
+    // content = await landNFTToken.tokenURI(tokenId);
+    // console.log("1,1 no buy", content);
 
     await (
       await landNFTToken

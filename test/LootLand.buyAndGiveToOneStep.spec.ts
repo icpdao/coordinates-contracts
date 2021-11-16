@@ -7,7 +7,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-const GAS_PRICE = 300000000;
+const GAS_PRICE = 3000000000;
 
 const expectLand = (
   land: any,
@@ -83,8 +83,8 @@ const exceptBuyAndGiveOneStep = async (
   );
 
   await expect(
-    landContract.ownerOf(await landContract.getTokenId(x, y))
-  ).to.be.revertedWith("ERC721: owner query for nonexistent token");
+    landContract.getTokenId(x, y)
+  ).to.be.revertedWith("not buyed");
 
   await (
     await landContract

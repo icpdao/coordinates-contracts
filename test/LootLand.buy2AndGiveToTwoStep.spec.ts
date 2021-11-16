@@ -103,12 +103,12 @@ const exceptBuy2AndGiveTwoStep = async (
   );
 
   await expect(
-    landContract.ownerOf(await landContract.getTokenId(x1, y1))
-  ).to.be.revertedWith("ERC721: owner query for nonexistent token");
+    landContract.getTokenId(x1, y1)
+  ).to.be.revertedWith("not buyed");
 
   await expect(
-    landContract.ownerOf(await landContract.getTokenId(x2, y2))
-  ).to.be.revertedWith("ERC721: owner query for nonexistent token");
+    landContract.getTokenId(x2, y2)
+  ).to.be.revertedWith("not buyed");
 
   // buy2
   await (
