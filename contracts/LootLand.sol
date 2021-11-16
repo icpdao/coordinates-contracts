@@ -210,12 +210,20 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
       )
     );
 
-    result = string(
-      abi.encodePacked(
-        "data:application/svg;base64,",
-        Base64.encode(bytes(svgStr))
+    string memory json = Base64.encode(
+      bytes(
+        string(
+          abi.encodePacked(
+            '{"name": "Land #',
+            Strings.toString(tokenId),
+            '", "description": "xxxxx", "image": "data:image/svg+xml;base64,',
+            Base64.encode(bytes(svgStr)),
+            '"}'
+          )
+        )
       )
     );
+    result = string(abi.encodePacked("data:application/json;base64,", json));
   }
 
   function getTokenId(int128 x, int128 y)
