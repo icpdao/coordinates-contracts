@@ -113,9 +113,9 @@ describe("LootLand.tokenid", async () => {
       [10, 0, "E10,0"],
       [-10, 0, "W10,0"],
       [0, 10, "0,N10"],
-      [-10, -10, "W10,S10"],
-      [-10, 10, "W10,N10"],
-      [10, -10, "E10,S10"],
+      [-10, -11, "W10,S11"],
+      [-10, 11, "W10,N11"],
+      [10, -11, "E10,S11"],
       [
         INT128_MIN.add(1),
         INT128_MAX.sub(1),
@@ -143,7 +143,7 @@ describe("LootLand.tokenid", async () => {
       const iy = dataList[i][1];
       // console.log("ix, iy", ix.toString(), iy.toString());
       const str = await landNFTToken.getCoordinatesString(ix, iy);
-      // expect(str).to.eq(dataList[i][2]);
+      expect(str).to.eq(dataList[i][2]);
       // console.log("str", str);
     }
   });
