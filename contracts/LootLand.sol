@@ -100,7 +100,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   ) external override {
     uint256 tokenId = getTokenId(x, y);
 
-    require(ownerOf(tokenId) == _msgSender(), "token is not belong to caller");
+    require(ownerOf(tokenId) == _msgSender(), "land is not belong to caller");
     require(bytes(slogan).length < 256, "slogan is too long");
 
     _lands[tokenId].slogan = slogan;
@@ -244,7 +244,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     returns (uint256 tokenId)
   {
     uint256 _packedXY = packedXY(x, y);
-    require(_packedXYToIsMinted[_packedXY], "not minted");
+    require(_packedXYToIsMinted[_packedXY], "land not minted");
     tokenId = _packedXYToTokenId[_packedXY];
   }
 
@@ -322,9 +322,9 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
     require(
       _lands[tokenId].mintedAddress == _msgSender(),
-      "caller didn't minted this token"
+      "caller didn't minted this land"
     );
-    require(!_lands[tokenId].isGived, "token is gived");
+    require(!_lands[tokenId].isGived, "land is gived");
 
     require(
       _lands[_gived[givedAddress]].givedAddress != givedAddress,
