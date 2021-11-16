@@ -37,7 +37,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   }
 
   constructor(address _owner, address _startUp)
-    ERC721("Land", "LAND")
+    ERC721("LootLand", "LOOTLAND")
     Ownable()
   {
     transferOwnership(_owner);
