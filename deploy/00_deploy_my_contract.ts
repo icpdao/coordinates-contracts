@@ -8,7 +8,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const {deployer} = await getNamedAccounts();
     const owner = "0xAce84e2A50EfcF847c3a1d21018cecc2075E4a78";
 
-    await deploy('Land', {
+    await deploy('LootLand', {
         from: deployer,
         args: [owner],
         log: true,
@@ -16,4 +16,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 };
 
 export default func;
-func.tags = ['Land'];
+func.tags = ['LootLand'];

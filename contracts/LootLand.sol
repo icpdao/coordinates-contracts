@@ -101,8 +101,14 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     emit SetSlogan(x, y, slogan);
   }
 
-  function getEth() external override onlyOwner {
+  function getAllEth() external override onlyOwner {
     payable(_msgSender()).transfer(address(this).balance);
+  }
+
+  function getEth(uint256 value) external override onlyOwner {
+    if (value <= address(this).balance) {
+      payable(_msgSender()).transfer(value);
+    }
   }
 
   function land(int128 _x, int128 _y)

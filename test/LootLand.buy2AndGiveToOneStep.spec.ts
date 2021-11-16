@@ -237,7 +237,7 @@ const expectGetEth = async (contract: any, owner: any) => {
   const getEthBeforeEthOwner = await owner.getBalance();
 
   const result = await (
-    await contract.connect(owner).getEth({
+    await contract.connect(owner).getAllEth({
       gasPrice: GAS_PRICE,
     })
   ).wait();

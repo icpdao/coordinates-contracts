@@ -57,7 +57,9 @@ interface ILootLand {
     string memory slogan
   ) external;
 
-  function getEth() external;
+  function getEth(uint256 value) external;
+
+  function getAllEth() external;
 
   function land(int128 _x, int128 _y) external view returns (Land memory token);
 
