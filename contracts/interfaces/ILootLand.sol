@@ -83,10 +83,10 @@ interface ILootLand {
     view
     returns (int128 x, int128 y);
 
-  function getCoordinatesString(int128 x, int128 y)
+  function getCoordinatesStrings(int128 x, int128 y)
     external
     pure
-    returns (string memory data);
+    returns (string memory sx, string memory sy);
 
   function packedXY(int128 x, int128 y)
     external

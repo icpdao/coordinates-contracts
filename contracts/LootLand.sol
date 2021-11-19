@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+pragma abicoder v2;
 
 import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -181,7 +182,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
       if (bytes(_lands[tokenId].slogan).length > 0) {
         _slogan = _lands[tokenId].slogan;
       } else {
-        _slogan = "<br/><br/>I'm this Builder  ^_^";
+        _slogan = "<br/>I'm this Builder  ^_^";
       }
     }
 
@@ -191,31 +192,26 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
     string memory _landStr = string(
       abi.encodePacked(
-        '<div class="land">Lootland (',
-        getCoordinatesString(x, y),
-        ")</div>"
+        '<div class="land">LootLand ',
+        _getTokenIdAndCoordinatesString(tokenId, x, y),
+        "</div>"
       )
     );
 
     string memory _notesStr = string(
       abi.encodePacked(
-        '<div class="notes">',
-        "<div>Rules:</div>",
-        "<div>- Lootland is the home of builders!</div>",
-        "<div>- Builders are invited-only!</div>",
-        "<div>- Each builder can mint at most two piece of land</div>",
-        "<div>- The minted lands can only be used for invitations</div>",
-        "<div>- Only one person can be invited to each piece of land</div>",
-        "<div>- Each person can only accept an invitation once</div>",
-        "<div>- Each piece of land is 100*100 square meters</div>",
-        "<div>- Can set Slogan on the land</div>",
-        "</div>"
+        '<div class="notes"><ul>',
+        _getInviteByStr(tokenId),
+        _getMintAndGiveToStr(tokenId),
+        '<li>Neighbors:</li></ul><div class="b">',
+        _getNeighborsStr(x, y),
+        "</div><ul><li>The value of the land is determined by the neighbors, so please invite with care!</li></ul></div>"
       )
     );
 
     string memory svgStr = string(
       abi.encodePacked(
-        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 360 360"><rect width="100%" height="100%" fill="#0F4C81" /><foreignObject width="360" height="360" x="0" y="0"><body xmlns="http://www.w3.org/1999/xhtml"><style>.base {font-family:sans-serif;margin:10px;}.sologan { color: #F0EDE5; font-size: 16px;margin-top:30px;height: 90px; }.land { color: #C0D725; font-size: 24px; height: 60px; }.notes { color: #A5B8D0; font-size: 12px; }</style><div class="base">',
+        '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 360 360"><rect width="100%" height="100%" fill="#0F4C81" /><foreignObject width="360" height="360" x="0" y="0"><body xmlns="http://www.w3.org/1999/xhtml"><style>.base{font-family:sans-serif;margin:10px;}.sologan{color:#F0EDE5;font-size:16px;line-height:25px;height:75px;margin-top:35px;}.land{color:#C0D725;font-size:24px;line-height:35px;margin-top:0px;}.notes{color:#A5B8D0;font-size:12px;margin-top:10px;}ul{list-style-type:disc;margin:0 0 0 -20px;}.b{margin:5px;justify-content: center;display:grid;grid-template-columns:repeat(3,max-content);grid-template-row:repeat(3,auto);grid-column-gap:5px;justify-items:start;}</style><div class="base">',
         _sloganStr,
         _landStr,
         _notesStr,
@@ -229,7 +225,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
           abi.encodePacked(
             '{"name": "Land #',
             Strings.toString(tokenId),
-            '", "description": "Imagine a world without authority,Imagine everyone can create freely,You may say I am a dreamer,But I am not the only one,I hope someday you will join us.", "image": "data:image/svg+xml;base64,',
+            '", "description": "Lootland is the home of builders,builders are invited-only,Each builder can mint at most two piece of land,the minted lands can only be used for invitation,only one person can be invited to each piece of land,each person can only accept an invitation once! It is a land space with (x,y) as coordinates. The positive x-axis is east and negative is west, the positive y-axis is north and negative is south, the values of x and y can only be integers, there is no range limit, each coordinate position represents an area of 100 x 100 square meters.", "image": "data:image/svg+xml;base64,',
             Base64.encode(bytes(svgStr)),
             '"}'
           )
@@ -272,11 +268,11 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     y = _lands[tokenId].y;
   }
 
-  function getCoordinatesString(int128 x, int128 y)
+  function getCoordinatesStrings(int128 x, int128 y)
     public
     pure
     override
-    returns (string memory data)
+    returns (string memory sx, string memory sy)
   {
     string memory xPrefix = "";
     if (x > 0) {
@@ -312,7 +308,8 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
       }
     }
 
-    data = string(abi.encodePacked(xPrefix, xStr, ",", yPrefix, yStr));
+    sx = string(abi.encodePacked(xPrefix, xStr));
+    sy = string(abi.encodePacked(yPrefix, yStr));
   }
 
   function _giveTo(
@@ -385,5 +382,156 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     _packedXYToIsMinted[_packedXY] = true;
 
     emit Mint(x, y, _msgSender());
+  }
+
+  function _getInviteByStr(uint256 tokenId)
+    private
+    view
+    returns (string memory _str)
+  {
+    string memory _var;
+    address mintedAddress = _lands[tokenId].mintedAddress;
+    if (mintedAddress == address(0)) {
+      _var = "Loot";
+    } else {
+      Land memory _ql = _lands[_gived[mintedAddress]];
+      _var = _getTokenIdAndCoordinatesString(
+        _gived[mintedAddress],
+        _ql.x,
+        _ql.y
+      );
+    }
+    _str = string(abi.encodePacked("<li>Invited by ", _var, "</li>"));
+  }
+
+  function _getMintAndGiveToStr(uint256 tokenId)
+    private
+    view
+    returns (string memory _str)
+  {
+    address _givedAddress = _lands[tokenId].givedAddress;
+    uint256[] memory tokenIds = _mintLandTokenIds[_givedAddress];
+    string memory _mintStr = "";
+    string memory _giveToStr = "";
+    if (tokenIds.length != 0) {
+      for (uint8 i = 0; i < tokenIds.length; i++) {
+        Land memory qLand = _lands[tokenIds[i]];
+        if (qLand.isGived) {
+          _giveToStr = string(
+            abi.encodePacked(
+              _giveToStr,
+              " ",
+              _getTokenIdAndCoordinatesString(tokenIds[i], qLand.x, qLand.y)
+            )
+          );
+        } else {
+          _mintStr = string(
+            abi.encodePacked(
+              _mintStr,
+              " ",
+              _getCoordinatesString(qLand.x, qLand.y)
+            )
+          );
+        }
+      }
+      _str = string(
+        abi.encodePacked(
+          bytes(_mintStr).length == 0
+            ? ""
+            : string(abi.encodePacked("<li>Mint", _mintStr, "</li>")),
+          bytes(_giveToStr).length == 0
+            ? ""
+            : string(abi.encodePacked("<li>Giveto", _giveToStr, "</li>"))
+        )
+      );
+    }
+  }
+
+  function _getNeighborsStr(int128 x, int128 y)
+    private
+    view
+    returns (string memory _str)
+  {
+    string[8] memory _arr = _getNeighborsStrArr(x, y);
+    _str = string(
+      abi.encodePacked(
+        _arr[0],
+        _arr[1],
+        _arr[2],
+        _arr[3],
+        "<div>Me</div>",
+        _arr[4],
+        _arr[5],
+        _arr[6],
+        _arr[7]
+      )
+    );
+  }
+
+  /**
+      (c1)x-1, y+1   (c2)x, y+1  (c3)x+1, y+1   
+      (c4)x-1, y     (c5)x, y    (c6)x+1, y
+      (c7)x-1, y-1   (c8)x, y-1  (c9)x+1, y-1
+     */
+  function _getNeighborsStrArr(int128 x, int128 y)
+    private
+    view
+    returns (string[8] memory _arr)
+  {
+    bool xIsMax = type(int128).max == x;
+    bool yIsMax = type(int128).max == y;
+    bool xIsMin = type(int128).min == x;
+    bool yIsMin = type(int128).min == y;
+    string memory empty = "<div>#</div>";
+
+    _arr[0] = (xIsMin || yIsMax) ? empty : _getTokenIdStr(x - 1, y + 1);
+    _arr[1] = yIsMax ? empty : _getTokenIdStr(x, y + 1);
+    _arr[2] = (xIsMax || yIsMax) ? empty : _getTokenIdStr(x + 1, y + 1);
+    _arr[3] = xIsMin ? empty : _getTokenIdStr(x - 1, y);
+    _arr[4] = xIsMax ? empty : _getTokenIdStr(x + 1, y);
+    _arr[5] = (xIsMin || yIsMin) ? empty : _getTokenIdStr(x - 1, y - 1);
+    _arr[6] = yIsMin ? empty : _getTokenIdStr(x, y - 1);
+    _arr[7] = xIsMax || yIsMin ? empty : _getTokenIdStr(x + 1, y - 1);
+  }
+
+  function _getTokenIdStr(int128 x, int128 y)
+    private
+    view
+    returns (string memory _str)
+  {
+    uint256 _packedXY = packedXY(x, y);
+
+    if (_packedXYToIsMinted[_packedXY]) {
+      _str = string(
+        abi.encodePacked("#", Strings.toString(_packedXYToTokenId[_packedXY]))
+      );
+    } else {
+      _str = "#";
+    }
+
+    _str = string(abi.encodePacked("<div>", _str, "</div>"));
+  }
+
+  function _getTokenIdAndCoordinatesString(
+    uint256 tokenId,
+    int128 x,
+    int128 y
+  ) private pure returns (string memory _str) {
+    _str = string(
+      abi.encodePacked(
+        "#",
+        Strings.toString(tokenId),
+        _getCoordinatesString(x, y)
+      )
+    );
+  }
+
+  function _getCoordinatesString(int128 x, int128 y)
+    private
+    pure
+    returns (string memory _str)
+  {
+    (string memory sx, string memory sy) = getCoordinatesStrings(x, y);
+    _str = string(abi.encodePacked("(", sx, ",", sy, ")"));
   }
 }
