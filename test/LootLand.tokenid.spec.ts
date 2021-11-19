@@ -486,4 +486,65 @@ describe("LootLand.tokenid", async () => {
     ).wait();
     await showXY(landNFTToken, x, y, "032_neighbors__10_10_have_8");
   });
+
+  it("neighbors outside 1", async () => {
+    const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
+
+    const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
+    const INT128_MAX = BigNumber.from(2).pow(127).sub(1);
+
+    await (
+      await landNFTToken
+        .connect(w1)
+        .mintAndGiveTo(INT128_MIN, INT128_MAX, w2.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, INT128_MIN, INT128_MAX, "033_neighbors__min_max_no");
+    await (
+      await landNFTToken
+        .connect(w1)
+        .mintAndGiveTo(0, INT128_MAX, w3.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, 0, INT128_MAX, "034_neighbors__0_max_no");
+    await (
+      await landNFTToken
+        .connect(w2)
+        .mintAndGiveTo(INT128_MAX, INT128_MAX, w4.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, INT128_MAX, INT128_MAX, "035_neighbors__max_max_no");
+    await (
+      await landNFTToken
+        .connect(w3)
+        .mintAndGiveTo(INT128_MIN, 0, w5.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, INT128_MIN, 0, "036_neighbors__min_0_no");
+    await (
+      await landNFTToken
+        .connect(w3)
+        .mintAndGiveTo(INT128_MAX, 0, w6.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, INT128_MAX, 0, "037_neighbors__max_0_no");
+    await (
+      await landNFTToken
+        .connect(w4)
+        .mintAndGiveTo(INT128_MIN, INT128_MIN, w7.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, INT128_MIN, INT128_MIN, "038_neighbors__min_min_no");
+    await (
+      await landNFTToken
+        .connect(w4)
+        .mintAndGiveTo(0, INT128_MIN, w8.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, 0, INT128_MIN, "039_neighbors__0_min_no");
+    await (
+      await landNFTToken
+        .connect(w5)
+        .mintAndGiveTo(INT128_MAX, INT128_MIN, w9.address,{ value: BigNumber.from(10).pow(18) })
+    ).wait();
+    await showXY(landNFTToken, INT128_MAX, INT128_MIN, "040_neighbors__max_min_no");
+  });
 });
