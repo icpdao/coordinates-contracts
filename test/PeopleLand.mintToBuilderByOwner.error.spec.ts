@@ -15,7 +15,7 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await expect(
       landNFTToken
         .connect(w2)
-        .mintToBuilderByOwner(111, 111, w3.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(111, 111, w3.address)
     ).to.revertedWith("Ownable: caller is not the owner");
   });
 
@@ -30,7 +30,7 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await expect(
       landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(111, 111, w3.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(111, 111, w3.address)
     ).to.revertedWith("land is not reserved");
   });
 
@@ -45,7 +45,7 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(1, 1, w2.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, 1, w2.address)
     ).wait();
 
     await (
@@ -94,25 +94,25 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(1, 1, w2.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, 1, w2.address)
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(1, 1, w2.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, 1, w2.address)
     ).to.revertedWith("givedAddress is minted or have gived");
 
     await expect(
       landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(2, 2, w2.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(2, 2, w2.address)
     ).to.revertedWith("givedAddress is minted or have gived");
 
     await expect(
       landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(1, 1, w3.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, 1, w3.address)
     ).to.revertedWith("land is minted");
   });
 
@@ -144,7 +144,7 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
       await expect(
         landNFTToken
           .connect(w1)
-          .mintToBuilderByOwner(xy[0], xy[1], w2.address, { value: BigNumber.from(10).pow(18) })
+          .mintToBuilderByOwner(xy[0], xy[1], w2.address)
       ).to.revertedWith("land is not reserved");
     }
   });

@@ -367,6 +367,8 @@ describe("PeopleLand.mintAndGiveToTwoStep", async () => {
       w1.address
     );
 
+    expect(await landNFTToken.isBuilder(w1.address)).eq(true);
+
     await exceptMintAndGiveTwoStep(landNFTToken, w1, w2, 0, -130, []);
     await exceptMintAndGiveTwoStep(landNFTToken, w1, w3, 0, 130, [
       [0, -130, w2.address],
@@ -401,6 +403,8 @@ describe("PeopleLand.mintAndGiveToTwoStep", async () => {
     await exceptMintAndGiveTwoStep(landNFTToken, w7, w15, 124, -125, [
       [123, -124, w14.address],
     ]);
+
+    expect(await landNFTToken.isBuilder(w2.address)).eq(false);
   });
 
   it("mint cast eth", async () => {

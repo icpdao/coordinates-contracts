@@ -335,7 +335,9 @@ describe("PeopleLand.mintToBuilderByOwner", async () => {
             xy[0],
             xy[1],
             w.address
-        )).wait()
+        )).wait();
+
+        expect(await landNFTToken.isBuilder(w.address)).eq(true);
        
         const [isGivedw, givedLandw] = await landNFTToken.givedLand(
           w.address
@@ -417,6 +419,8 @@ describe("PeopleLand.mintToBuilderByOwner", async () => {
     await exceptMintAndGiveTwoStep(landNFTToken, w7, w15, 124, -125, [
       [123, -124, w14.address],
     ]);
+
+    expect(await landNFTToken.isBuilder(w2.address)).eq(false);
   });
 
   it("mint cast eth", async () => {

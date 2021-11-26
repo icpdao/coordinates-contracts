@@ -23,6 +23,8 @@ interface IPeopleLand {
 
   function isPeople(address addr) external view returns (bool);
 
+  function isBuilder(address addr) external view returns (bool);
+
   function mintToSelf(
     int128 x,
     int128 y,

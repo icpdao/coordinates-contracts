@@ -348,49 +348,49 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(-1, 1, w2.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(-1, 1, w2.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "019_neighbors__0_0_have_1");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(0, 1, w3.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(0, 1, w3.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "020_neighbors__0_0_have_2");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(1, 1, w4.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, 1, w4.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "021_neighbors__0_0_have_3");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(-1, 0, w5.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(-1, 0, w5.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "022_neighbors__0_0_have_4");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(1, 0, w6.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, 0, w6.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "023_neighbors__0_0_have_5");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(-1, -1, w7.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(-1, -1, w7.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "023_neighbors__0_0_have_6");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(0, -1, w8.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(0, -1, w8.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "023_neighbors__0_0_have_7");
     await (
       await landNFTToken
         .connect(owner)
-        .mintToBuilderByOwner(1, -1, w9.address,{ value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(1, -1, w9.address)
     ).wait();
     await showXY(landNFTToken, 0, 0, "023_neighbors__0_0_have_8");
   });
@@ -521,5 +521,44 @@ describe("PeopleLand.tokenid", async () => {
         .mintAndGiveTo(INT128_MAX, INT128_MIN, w9.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
     await showXY(landNFTToken, INT128_MAX, INT128_MIN, "040_neighbors__max_min_no");
+  });
+
+  it("is people", async () => {
+    const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
+      w1.address
+    )) as PeopleLand;
+
+    await (
+      await landNFTToken
+        .connect(wWiiteList1)
+        .mintToSelf(
+          29,
+          -29,
+          "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
+          27,
+          "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
+          "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
+        )
+    ).wait();
+
+    await showXY(landNFTToken, 29, -29, "041_is_people__29_-29");
+  });
+
+  it("is build", async () => {
+    const [deployAcc, owner, w1, w2] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
+      w1.address
+    )) as PeopleLand;
+
+    await (
+      await landNFTToken.connect(owner).mintToBuilderByOwner(2, -1, w2.address)
+    ).wait();
+
+    await showXY(landNFTToken, 2, -1, "042_is_builder__2_-1");
   });
 });
