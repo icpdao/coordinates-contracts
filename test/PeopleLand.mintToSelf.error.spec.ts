@@ -349,8 +349,8 @@ describe("PeopleLand.mintToSelf.error", async () => {
       await landNFTToken
         .connect(wWiiteList1)
         .mintToSelf(
-          100,
-          100,
+          29,
+          -29,
           "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
           27,
           "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
@@ -363,10 +363,10 @@ describe("PeopleLand.mintToSelf.error", async () => {
     ).eq(true);
 
     await expect(
-      landNFTToken.connect(w1).mintAndGiveTo(100, 100, w2.address, {
+      landNFTToken.connect(w1).mintAndGiveTo(29, -29, w2.address, {
         value: BigNumber.from(10).pow(18),
       })
-    ).to.revertedWith("land is minted");
+    ).to.revertedWith("land is people reserved");
     await expect(
       landNFTToken.connect(w1).mintAndGiveTo(101, 101, wWiiteList1.address, {
         value: BigNumber.from(10).pow(18),

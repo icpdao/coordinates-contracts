@@ -278,30 +278,30 @@ describe("PeopleLand.mint2AndGiveToOneStep", async () => {
       w1.address
     );
 
-    await exceptMint2AndGiveOneStep(landNFTToken, w1, w2, w3, 11, -12, 12, -13);
-    await exceptMint2AndGiveOneStep(landNFTToken, w2, w4, w5, 13, -14, 14, -15);
-    await exceptMint2AndGiveOneStep(landNFTToken, w3, w6, w7, 15, -16, 16, -17);
-    await exceptMint2AndGiveOneStep(landNFTToken, w4, w8, w9, 17, -18, 18, -19);
-    await exceptMint2AndGiveOneStep(landNFTToken, w5, w10, w11, 19, -20, 20, -21);
+    await exceptMint2AndGiveOneStep(landNFTToken, w1, w2, w3, 111, -112, 112, -113);
+    await exceptMint2AndGiveOneStep(landNFTToken, w2, w4, w5, 113, -114, 114, -115);
+    await exceptMint2AndGiveOneStep(landNFTToken, w3, w6, w7, 115, -116, 116, -117);
+    await exceptMint2AndGiveOneStep(landNFTToken, w4, w8, w9, 117, -118, 118, -119);
+    await exceptMint2AndGiveOneStep(landNFTToken, w5, w10, w11, 119, -120, 120, -121);
     await exceptMint2AndGiveOneStep(
       landNFTToken,
       w6,
       w12,
       w13,
-      21,
-      -22,
-      22,
-      -23
+      121,
+      -122,
+      122,
+      -123
     );
     await exceptMint2AndGiveOneStep(
       landNFTToken,
       w7,
       w14,
       w15,
-      23,
-      -24,
-      24,
-      -25
+      123,
+      -124,
+      124,
+      -125
     );
   });
 
@@ -320,10 +320,10 @@ describe("PeopleLand.mint2AndGiveToOneStep", async () => {
     await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
-      11,
-      11,
-      12,
-      12,
+      111,
+      111,
+      112,
+      112,
       w1,
       w2,
       w3,
@@ -335,10 +335,10 @@ describe("PeopleLand.mint2AndGiveToOneStep", async () => {
     await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
-      13,
-      13,
-      14,
-      14,
+      113,
+      113,
+      114,
+      114,
       w2,
       w4,
       w5,
@@ -350,10 +350,10 @@ describe("PeopleLand.mint2AndGiveToOneStep", async () => {
     await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
-      15,
-      15,
-      16,
-      16,
+      115,
+      115,
+      116,
+      116,
       w3,
       w6,
       w7,

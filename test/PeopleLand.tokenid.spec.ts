@@ -35,14 +35,14 @@ describe("PeopleLand.tokenid", async () => {
     const INT128_MAX = BigNumber.from(2).pow(127).sub(1);
 
     const coordinates = [
-      [10, 11],
-      [100, -10],
-      [10, 100],
-      [-10, 100],
-      [100, 10],
-      [-11, -10],
-      [-10, 11],
-      [11, -10],
+      [110, 111],
+      [100, -111],
+      [101, 100],
+      [-101, 100],
+      [100, 101],
+      [-111, -101],
+      [-101, 111],
+      [111, -101],
       [INT128_MIN, INT128_MAX],
       [INT128_MAX, INT128_MIN],
     ];
@@ -201,33 +201,8 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mint(11, -10, { value: BigNumber.from(10).pow(18) })
+        .mint(111, -110, { value: BigNumber.from(10).pow(18) })
     ).wait();
-
-    // tokenId = await landNFTToken.getTokenId(0, 0);
-    // content = await landNFTToken.tokenURI(tokenId);
-    // console.log("0,0 mint one not give", content);
-    //
-    // await (
-    //   await landNFTToken
-    //     .connect(w1)
-    //     .mint(100, -10, { value: BigNumber.from(10).pow(18) })
-    // ).wait();
-    // tokenId = await landNFTToken.getTokenId(100, -10);
-    // content = await landNFTToken.tokenURI(tokenId);
-    // console.log("100,-10 mint", content);
-    //
-    // await (await landNFTToken.connect(w1).giveTo(100, -10, w2.address)).wait();
-    // tokenId = await landNFTToken.getTokenId(100, -10);
-    // content = await landNFTToken.tokenURI(tokenId);
-    // console.log("100,-10, gived", content);
-    //
-    // await (
-    //   await landNFTToken.connect(w2).setSlogan(100, -10, "hahah<br/>ah")
-    // ).wait();
-    // tokenId = await landNFTToken.getTokenId(100, -10);
-    // content = await landNFTToken.tokenURI(tokenId);
-    // console.log("100,-10 have slogan", content);
   });
 
   it("token uri invited", async () => {
@@ -243,18 +218,18 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mintAndGiveTo(11, -10, w2.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(111, -110, w2.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
 
-    await showXY(landNFTToken, 11, -10, "002_invited__11_-10_is_0_0");
+    await showXY(landNFTToken, 111, -110, "002_invited__111_-110_is_0_0");
 
     await (
       await landNFTToken
         .connect(w2)
-        .mintAndGiveTo(13, -14, w3.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(113, -114, w3.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
 
-    await showXY(landNFTToken, 13, -14, "003_invited__13_-14_is_11_-10");
+    await showXY(landNFTToken, 113, -114, "003_invited__113_-114_is_111_-110");
   });
 
   it("token uri mint and giveto", async () => {
@@ -270,65 +245,65 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mint(12, 13,{ value: BigNumber.from(10).pow(18) })
+        .mint(112, 113,{ value: BigNumber.from(10).pow(18) })
     ).wait();
 
-    await showXY(landNFTToken, 0, 0, "005_mint_and_giveto__0_0_m1#1(12,13)");
+    await showXY(landNFTToken, 0, 0, "005_mint_and_giveto__0_0_m1#1(112,113)");
 
     await (
       await landNFTToken
         .connect(w1)
-        .mint(22, 23,{ value: BigNumber.from(10).pow(18) })
+        .mint(122, 123,{ value: BigNumber.from(10).pow(18) })
     ).wait();
 
-    await showXY(landNFTToken, 0, 0, "006_mint_and_giveto__0_0_m2#1(12,13)_#2(22,23)");
+    await showXY(landNFTToken, 0, 0, "006_mint_and_giveto__0_0_m2#1(112,113)_#2(122,123)");
 
     await (
       await landNFTToken
         .connect(w1)
-        .giveTo(12, 13, w2.address)
+        .giveTo(112, 113, w2.address)
     ).wait();
 
-    await showXY(landNFTToken, 0, 0, "007_mint_and_giveto__0_0_m1#2(22,23)_g1#1(12,13)");
+    await showXY(landNFTToken, 0, 0, "007_mint_and_giveto__0_0_m1#2(122,123)_g1#1(112,113)");
 
     await (
       await landNFTToken
         .connect(w1)
-        .giveTo(22, 23, w3.address)
+        .giveTo(122, 123, w3.address)
     ).wait();
 
-    await showXY(landNFTToken, 0, 0, "008_mint_and_giveto__0_0_g2#1(12,13)#2(22,23)");
+    await showXY(landNFTToken, 0, 0, "008_mint_and_giveto__0_0_g2#1(112,113)#2(122,123)");
 
     //
-    await showXY(landNFTToken, 12, 13, "009_mint_and_giveto__12_13_no");
-
-    await (
-      await landNFTToken
-        .connect(w2)
-        .mint(20, 30,{ value: BigNumber.from(10).pow(18) })
-    ).wait();
-    await showXY(landNFTToken, 12, 13, "010_mint_and_giveto__12_13_m1#3(20,30)");
+    await showXY(landNFTToken, 112, 113, "009_mint_and_giveto__112_113_no");
 
     await (
       await landNFTToken
         .connect(w2)
         .mint(120, 130,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, 12, 13, "011_mint_and_giveto__12_13_m2#3(20,30)_#4(120,130)");
+    await showXY(landNFTToken, 112, 113, "010_mint_and_giveto__112_113_m1#3(120,130)");
 
     await (
       await landNFTToken
         .connect(w2)
-        .giveTo(20, 30, w4.address)
+        .mint(1120, 1130,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, 12, 13, "012_mint_and_giveto__12_13_m1#4(120,130)_g1#3(20,30)");
+    await showXY(landNFTToken, 112, 113, "011_mint_and_giveto__112_113_m2#3(120,130)_#4(1120,1130)");
 
     await (
       await landNFTToken
         .connect(w2)
-        .giveTo(120, 130, w5.address)
+        .giveTo(120, 130, w4.address)
     ).wait();
-    await showXY(landNFTToken, 12, 13, "013_mint_and_giveto__12_13_g2#3(20,30)#4(120,130)");
+    await showXY(landNFTToken, 112, 113, "012_mint_and_giveto__112_113_m1#4(1120,1130)_g1#3(120,130)");
+
+    await (
+      await landNFTToken
+        .connect(w2)
+        .giveTo(1120, 1130, w5.address)
+    ).wait();
+    await showXY(landNFTToken, 112, 113, "013_mint_and_giveto__112_113_g2#3(120,130)#4(1120,1130)");
 
   });
 
@@ -346,19 +321,19 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mintAndGiveTo(12, 13, w2.address, {value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(112, 113, w2.address, {value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, 0, 0, "015_mint_and_giveto2__0_0_g1#1(12,13)");
+    await showXY(landNFTToken, 0, 0, "015_mint_and_giveto2__0_0_g1#1(112,113)");
 
     //
-    await showXY(landNFTToken, 12, 13, "016_mint_and_giveto2__12_13_no");
+    await showXY(landNFTToken, 112, 113, "016_mint_and_giveto2__112_113_no");
 
     await (
       await landNFTToken
         .connect(w2)
-        .mintAndGiveTo(20, 30, w4.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(120, 130, w4.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, 12, 13, "017_mint_and_giveto2__12_13_g1#1(20,30)");
+    await showXY(landNFTToken, 112, 113, "017_mint_and_giveto2__112_113_g1#1(120,130)");
   });
 
   it("token uri mint and neighbors", async () => {
@@ -428,63 +403,63 @@ describe("PeopleLand.tokenid", async () => {
       w1.address
     )) as PeopleLand;
 
-    const x = 10;
-    const y = 10;
+    const x = 110;
+    const y = 110;
 
     await (
       await landNFTToken
         .connect(w1)
-        .mintAndGiveTo(10, 10, w2.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(110, 110, w2.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "024_neighbors__10_10_no");
+    await showXY(landNFTToken, x, y, "024_neighbors__110_110_no");
     await (
       await landNFTToken.connect(w2).mintAndGiveTo(x - 1, y + 1, w3.address, {
         value: BigNumber.from(10).pow(18),
       })
     ).wait();
-    await showXY(landNFTToken, x, y, "025_neighbors__10_10_have_1");
+    await showXY(landNFTToken, x, y, "025_neighbors__110_110_have_1");
     await (
       await landNFTToken.connect(w2).mintAndGiveTo(x, y + 1, w4.address, {
         value: BigNumber.from(10).pow(18),
       })
     ).wait();
-    await showXY(landNFTToken, x, y, "026_neighbors__10_10_have_2");
+    await showXY(landNFTToken, x, y, "026_neighbors__110_110_have_2");
     await (
       await landNFTToken
         .connect(w3)
         .mintAndGiveTo(x+1, y+1, w5.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "027_neighbors__10_10_have_3");
+    await showXY(landNFTToken, x, y, "027_neighbors__110_110_have_3");
     await (
       await landNFTToken
         .connect(w3)
         .mintAndGiveTo(x-1, y, w6.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "028_neighbors__10_10_have_4");
+    await showXY(landNFTToken, x, y, "028_neighbors__110_110_have_4");
     await (
       await landNFTToken
         .connect(w4)
         .mintAndGiveTo(x+1, y, w7.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "029_neighbors__10_10_have_5");
+    await showXY(landNFTToken, x, y, "029_neighbors__110_110_have_5");
     await (
       await landNFTToken
         .connect(w4)
         .mintAndGiveTo(x-1, y-1, w8.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "030_neighbors__10_10_have_6");
+    await showXY(landNFTToken, x, y, "030_neighbors__110_110_have_6");
     await (
       await landNFTToken
         .connect(w5)
         .mintAndGiveTo(x, y-1, w9.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "031_neighbors__10_10_have_7");
+    await showXY(landNFTToken, x, y, "031_neighbors__110_110_have_7");
     await (
       await landNFTToken
         .connect(w5)
         .mintAndGiveTo(x+1, y-1, w10.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, x, y, "032_neighbors__10_10_have_8");
+    await showXY(landNFTToken, x, y, "032_neighbors__110_110_have_8");
   });
 
   it("neighbors outside 1", async () => {
@@ -507,9 +482,9 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mintAndGiveTo(10, INT128_MAX, w3.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(110, INT128_MAX, w3.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, 10, INT128_MAX, "034_neighbors__10_max_no");
+    await showXY(landNFTToken, 110, INT128_MAX, "034_neighbors__110_max_no");
     await (
       await landNFTToken
         .connect(w2)
@@ -519,15 +494,15 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w3)
-        .mintAndGiveTo(INT128_MIN, 10, w5.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(INT128_MIN, 110, w5.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, INT128_MIN, 10, "036_neighbors__min_10_no");
+    await showXY(landNFTToken, INT128_MIN, 110, "036_neighbors__min_110_no");
     await (
       await landNFTToken
         .connect(w3)
-        .mintAndGiveTo(INT128_MAX, 10, w6.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(INT128_MAX, 110, w6.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, INT128_MAX, 10, "037_neighbors__max_0_no");
+    await showXY(landNFTToken, INT128_MAX, 110, "037_neighbors__max_110_no");
     await (
       await landNFTToken
         .connect(w4)
@@ -537,9 +512,9 @@ describe("PeopleLand.tokenid", async () => {
     await (
       await landNFTToken
         .connect(w4)
-        .mintAndGiveTo(10, INT128_MIN, w8.address,{ value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(110, INT128_MIN, w8.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
-    await showXY(landNFTToken, 10, INT128_MIN, "039_neighbors__10_min_no");
+    await showXY(landNFTToken, 110, INT128_MIN, "039_neighbors__110_min_no");
     await (
       await landNFTToken
         .connect(w5)

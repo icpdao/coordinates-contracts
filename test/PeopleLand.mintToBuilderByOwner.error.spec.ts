@@ -15,7 +15,7 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await expect(
       landNFTToken
         .connect(w2)
-        .mintToBuilderByOwner(11, 11, w3.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(111, 111, w3.address, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("Ownable: caller is not the owner");
   });
 
@@ -30,7 +30,7 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await expect(
       landNFTToken
         .connect(w1)
-        .mintToBuilderByOwner(11, 11, w3.address, { value: BigNumber.from(10).pow(18) })
+        .mintToBuilderByOwner(111, 111, w3.address, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is not reserved");
   });
 
@@ -51,35 +51,35 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     await (
       await landNFTToken
         .connect(w2)
-        .mintAndGiveTo(11, 11, w3.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(111, 111, w3.address, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await (
       await landNFTToken
         .connect(w2)
-        .mintAndGiveTo(12, 12, w4.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(112, 112, w4.address, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w2)
-        .mintAndGiveTo(13, 13, w5.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(113, 113, w5.address, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
 
     await (
       await landNFTToken
         .connect(w3)
-        .mintAndGiveTo(15, 15, w5.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(115, 115, w5.address, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await (
       await landNFTToken
         .connect(w3)
-        .mintAndGiveTo(16, 16, w6.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(116, 116, w6.address, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w3)
-        .mintAndGiveTo(17, 17, w7.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(117, 117, w7.address, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
   });
 
@@ -127,11 +127,20 @@ describe("PeopleLand.mintToBuilderByOwner.error", async () => {
     const data = [
       [-3, -3],
       [3, 3],
+      [0, -3],
+      [0, 3],
+      [1, 3],
+      [1, -3],
+      [2, 4],
+      [2, -4],
+      [3, 1],
+      [-3, 1],
+      [4, 2],
+      [-4, 2],
     ];
 
     for(let i = 0; i < data.length; i++) {
       const xy = data[i];
-
       await expect(
         landNFTToken
           .connect(w1)

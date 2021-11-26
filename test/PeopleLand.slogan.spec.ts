@@ -21,30 +21,30 @@ describe("PeopleLand.slogan", async () => {
     ).wait();
     expect((await landNFTToken.land(0, 0)).slogan).eq("123");
 
-    expect((await landNFTToken.land(100, -10)).slogan).eq("");
+    expect((await landNFTToken.land(100, -110)).slogan).eq("");
 
     await (
       await landNFTToken
         .connect(w1)
-        .mint(100, -10, { value: BigNumber.from(10).pow(18) })
+        .mint(100, -110, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
-    expect((await landNFTToken.land(100, -10)).slogan).eq("");
+    expect((await landNFTToken.land(100, -110)).slogan).eq("");
 
-    await (await landNFTToken.connect(w1).giveTo(100, -10, w2.address)).wait();
+    await (await landNFTToken.connect(w1).giveTo(100, -110, w2.address)).wait();
 
-    expect((await landNFTToken.land(100, -10)).slogan).eq("");
+    expect((await landNFTToken.land(100, -110)).slogan).eq("");
 
     await (
-      await landNFTToken.connect(w2).setSlogan(100, -10, "hahahah 123")
+      await landNFTToken.connect(w2).setSlogan(100, -110, "hahahah 123")
     ).wait();
 
-    expect((await landNFTToken.land(100, -10)).slogan).eq("hahahah 123");
+    expect((await landNFTToken.land(100, -110)).slogan).eq("hahahah 123");
 
     await (
-      await landNFTToken.connect(w2).setSlogan(100, -10, "hahahah <br/>123")
+      await landNFTToken.connect(w2).setSlogan(100, -110, "hahahah <br/>123")
     ).wait();
 
-    expect((await landNFTToken.land(100, -10)).slogan).eq("hahahah <br/>123");
+    expect((await landNFTToken.land(100, -110)).slogan).eq("hahahah <br/>123");
   });
 });

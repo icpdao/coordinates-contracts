@@ -226,31 +226,31 @@ describe("PeopleLand.mintAndGiveToOneStep", async () => {
       w1.address
     );
 
-    await exceptMintAndGiveOneStep(landNFTToken, w1, w2, 11, -12, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w1, w3, 12, -13, [[11, -12, w2.address]]);
+    await exceptMintAndGiveOneStep(landNFTToken, w1, w2, 111, -112, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w1, w3, 112, -113, [[111, -112, w2.address]]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w2, w4, 13, -14, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w2, w5, 14, -15, [[13, -14, w4.address]]);
+    await exceptMintAndGiveOneStep(landNFTToken, w2, w4, 113, -114, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w2, w5, 114, -115, [[113, -114, w4.address]]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w3, w6, 15, -16, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w3, w7, 16, -17, [[15, -16, w6.address]]);
+    await exceptMintAndGiveOneStep(landNFTToken, w3, w6, 115, -116, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w3, w7, 116, -117, [[115, -116, w6.address]]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w4, w8, 17, -18, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w4, w9, 18, -19, [[17, -18, w8.address]]);
+    await exceptMintAndGiveOneStep(landNFTToken, w4, w8, 117, -118, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w4, w9, 118, -119, [[117, -118, w8.address]]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w5, w10, 19, -20, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w5, w11, 20, -21, [
-      [19, -20, w10.address],
+    await exceptMintAndGiveOneStep(landNFTToken, w5, w10, 119, -120, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w5, w11, 120, -121, [
+      [119, -120, w10.address],
     ]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w6, w12, 21, -22, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w6, w13, 22, -23, [
-      [21, -22, w12.address],
+    await exceptMintAndGiveOneStep(landNFTToken, w6, w12, 121, -122, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w6, w13, 122, -123, [
+      [121, -122, w12.address],
     ]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w7, w14, 23, -24, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w7, w15, 24, -25, [
-      [23, -24, w14.address],
+    await exceptMintAndGiveOneStep(landNFTToken, w7, w14, 123, -124, []);
+    await exceptMintAndGiveOneStep(landNFTToken, w7, w15, 124, -125, [
+      [123, -124, w14.address],
     ]);
   });
 
@@ -269,8 +269,8 @@ describe("PeopleLand.mintAndGiveToOneStep", async () => {
     await exceptMintCost(
       PRICE,
       landNFTToken,
-      11,
-      11,
+      111,
+      111,
       w1,
       w2.address,
       BigNumber.from(10).pow(18)
@@ -278,7 +278,7 @@ describe("PeopleLand.mintAndGiveToOneStep", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE
     );
-    await exceptMintCost(PRICE, landNFTToken, 12, 12, w1, w3.address, PRICE);
+    await exceptMintCost(PRICE, landNFTToken, 112, 112, w1, w3.address, PRICE);
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)
     );
@@ -286,8 +286,8 @@ describe("PeopleLand.mintAndGiveToOneStep", async () => {
     await exceptMintCost(
       PRICE,
       landNFTToken,
-      13,
-      13,
+      113,
+      113,
       w2,
       w4.address,
       PRICE.add(100)
@@ -295,7 +295,7 @@ describe("PeopleLand.mintAndGiveToOneStep", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(3)
     );
-    await exceptMintCost(PRICE, landNFTToken, 14, 14, w2, w5.address, PRICE);
+    await exceptMintCost(PRICE, landNFTToken, 114, 114, w2, w5.address, PRICE);
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(4)
     );

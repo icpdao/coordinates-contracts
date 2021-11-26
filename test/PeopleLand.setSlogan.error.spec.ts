@@ -13,25 +13,25 @@ describe("PeopleLand.setSlogan.error", async () => {
     )) as PeopleLand;
 
     await expect(
-      landNFTToken.connect(w1).setSlogan(12, 12, "123")
+      landNFTToken.connect(w1).setSlogan(112, 112, "123")
     ).to.revertedWith("land not minted");
 
     await (
       await landNFTToken
         .connect(w1)
-        .mint(12, 12, { value: BigNumber.from(10).pow(18) })
+        .mint(112, 112, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await expect(
-      landNFTToken.connect(w1).setSlogan(12, 12, "123")
+      landNFTToken.connect(w1).setSlogan(112, 112, "123")
     ).to.revertedWith("ERC721: owner query for nonexistent token");
 
-    await (await landNFTToken.connect(w1).giveTo(12, 12, w2.address)).wait();
+    await (await landNFTToken.connect(w1).giveTo(112, 112, w2.address)).wait();
     await expect(
-      landNFTToken.connect(w1).setSlogan(12, 12, "123")
+      landNFTToken.connect(w1).setSlogan(112, 112, "123")
     ).to.revertedWith("land is not belong to caller");
     await (
-      await landNFTToken.connect(w2).setSlogan(12, 12, "hahahah <br/>123")
+      await landNFTToken.connect(w2).setSlogan(112, 112, "hahahah <br/>123")
     ).wait();
-    expect((await landNFTToken.land(12, 12)).slogan).eq("hahahah <br/>123");
+    expect((await landNFTToken.land(112, 112)).slogan).eq("hahahah <br/>123");
   });
 });

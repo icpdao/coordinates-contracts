@@ -43,13 +43,21 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     _;
   }
 
+  modifier notPeopleReserved(int128 x, int128 y) {
+    require(
+      !((-31 < x && x < 31) && (-31 < y && y < 31)),
+      "land is people reserved"
+    );
+    _;
+  }
+
   modifier notReserved(int128 x, int128 y) {
-    require((x > 2 || x < -2) && (y > 2 || y < -2), "land is reserved");
+    require(!((-3 < x && x < 3) && (-3 < y && y < 3)), "land is reserved");
     _;
   }
 
   modifier isReserved(int128 x, int128 y) {
-    require((x < 3 && x > -3) && (y < 3 || y > -3), "land is not reserved");
+    require((-3 < x && x < 3) && (-3 < y && y < 3), "land is not reserved");
     _;
   }
 
@@ -440,7 +448,7 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     }
   }
 
-  function _mintWithoutEth(int128 x, int128 y) private notReserved(x, y) {
+  function _mintWithoutEth(int128 x, int128 y) private notPeopleReserved(x, y) {
     require(mintLandCount[_msgSender()] < 2, "caller is already minted");
 
     uint256 _packedXY = packedXY(x, y);

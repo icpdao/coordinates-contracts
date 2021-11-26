@@ -12,7 +12,7 @@ describe("PeopleLand.mint.error", async () => {
       w1.address
     )) as PeopleLand;
 
-    await expect(landNFTToken.connect(w2).mint(11, 11)).to.revertedWith(
+    await expect(landNFTToken.connect(w2).mint(111, 111)).to.revertedWith(
       "caller is no gived"
     );
   });
@@ -28,33 +28,33 @@ describe("PeopleLand.mint.error", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mint(11, 11, { value: BigNumber.from(10).pow(18) })
+        .mint(111, 111, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await (
       await landNFTToken
         .connect(w1)
-        .mint(12, 12, { value: BigNumber.from(10).pow(18) })
+        .mint(112, 112, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
-      landNFTToken.connect(w1).mint(13, 13, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w1).mint(113, 113, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
 
-    await (await landNFTToken.connect(w1).giveTo(11, 11, w2.address)).wait();
+    await (await landNFTToken.connect(w1).giveTo(111, 111, w2.address)).wait();
 
     await (
       await landNFTToken
         .connect(w2)
-        .mint(15, 15, { value: BigNumber.from(10).pow(18) })
+        .mint(115, 115, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await (
       await landNFTToken
         .connect(w2)
-        .mint(16, 16, { value: BigNumber.from(10).pow(18) })
+        .mint(116, 116, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
-      landNFTToken.connect(w2).mint(17, 17, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w2).mint(117, 117, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
   });
 
@@ -67,57 +67,57 @@ describe("PeopleLand.mint.error", async () => {
     )) as PeopleLand;
     await expect(
       landNFTToken.connect(w1).mint(0, 0, { value: BigNumber.from(10).pow(18) })
-    ).to.revertedWith("land is reserved");
+    ).to.revertedWith("land is people reserved");
     await (
       await landNFTToken
         .connect(w1)
-        .mint(11, 11, { value: BigNumber.from(10).pow(18) })
+        .mint(111, 111, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await expect(
-      landNFTToken.connect(w1).mint(11, 11, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w1).mint(111, 111, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is minted");
     await expect(
       landNFTToken.connect(w1).mint(0, 0, { value: BigNumber.from(10).pow(18) })
-    ).to.revertedWith("land is reserved");
+    ).to.revertedWith("land is people reserved");
     await (
       await landNFTToken
         .connect(w1)
-        .mint(12, 12, { value: BigNumber.from(10).pow(18) })
+        .mint(112, 112, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await expect(
-      landNFTToken.connect(w1).mint(12, 12, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w1).mint(112, 112, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
     await expect(
-      landNFTToken.connect(w1).mint(13, 13, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w1).mint(113, 113, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
 
-    await (await landNFTToken.connect(w1).giveTo(11, 11, w2.address)).wait();
+    await (await landNFTToken.connect(w1).giveTo(111, 111, w2.address)).wait();
 
     await (
       await landNFTToken
         .connect(w2)
-        .mint(15, 15, { value: BigNumber.from(10).pow(18) })
+        .mint(115, 115, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await expect(
-      landNFTToken.connect(w2).mint(11, 11, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w2).mint(111, 111, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is minted");
     await expect(
       landNFTToken.connect(w2).mint(0, 0, { value: BigNumber.from(10).pow(18) })
-    ).to.revertedWith("land is reserved");
+    ).to.revertedWith("land is people reserved");
     await expect(
-      landNFTToken.connect(w2).mint(15, 15, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w2).mint(115, 115, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is minted");
     await (
       await landNFTToken
         .connect(w2)
-        .mint(16, 16, { value: BigNumber.from(10).pow(18) })
+        .mint(116, 116, { value: BigNumber.from(10).pow(18) })
     ).wait();
     await expect(
-      landNFTToken.connect(w2).mint(16, 16, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w2).mint(116, 116, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
 
     await expect(
-      landNFTToken.connect(w2).mint(17, 17, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w2).mint(117, 117, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
   });
 
@@ -132,20 +132,20 @@ describe("PeopleLand.mint.error", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mint(11, 11, { value: BigNumber.from(10).pow(18) })
+        .mint(111, 111, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await (
       await landNFTToken
         .connect(w1)
-        .mint(12, 12, { value: BigNumber.from(10).pow(18) })
+        .mint(112, 112, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
-    await (await landNFTToken.connect(w1).giveTo(11, 11, w2.address)).wait();
-    await (await landNFTToken.connect(w1).giveTo(12, 12, w3.address)).wait();
+    await (await landNFTToken.connect(w1).giveTo(111, 111, w2.address)).wait();
+    await (await landNFTToken.connect(w1).giveTo(112, 112, w3.address)).wait();
 
     await expect(
-      landNFTToken.connect(w2).mint(12, 12, { value: BigNumber.from(10).pow(18) })
+      landNFTToken.connect(w2).mint(112, 112, { value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("land is minted");
   });
 
@@ -156,6 +156,7 @@ describe("PeopleLand.mint.error", async () => {
       w1.address,
       w1.address
     )) as PeopleLand;
+
 
     const data = [
       [-2, -2],
@@ -186,16 +187,24 @@ describe("PeopleLand.mint.error", async () => {
       [2, 0],
       [2, 1],
       [2, 2],
+
+      [30, 30],
+      [29, 29],
+      [-30, -30],
+      [-29, -29],
+      [-30, 0],
+      [30, 0],
+      [0, -30],
+      [0, 30],
     ];
 
     for(let i = 0; i < data.length; i++) {
       const xy = data[i];
-
       await expect(
         landNFTToken
           .connect(w1)
           .mint(xy[0], xy[1], { value: BigNumber.from(10).pow(18) })
-      ).to.revertedWith("land is reserved");
+      ).to.revertedWith("land is people reserved");
     }
   });
 });
