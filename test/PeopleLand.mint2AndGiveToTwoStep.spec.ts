@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 // eslint-disable-next-line node/no-missing-import
-import { LootLand } from "../typechain";
+import { PeopleLand } from "../typechain";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -33,7 +33,7 @@ const expectLand = (
 };
 
 const exceptMint2AndGiveTwoStep = async (
-  landContract: LootLand,
+  landContract: PeopleLand,
   minted: SignerWithAddress,
   gived1: SignerWithAddress,
   gived2: SignerWithAddress,
@@ -329,15 +329,15 @@ const expectGetEth = async (contract: any, owner: any) => {
   );
 };
 
-describe("LootLand.mint2AndGiveToTwoStep", async () => {
+describe("PeopleLand.mint2AndGiveToTwoStep", async () => {
   it("mint and give to", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
       await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
     expectLand(
@@ -385,11 +385,11 @@ describe("LootLand.mint2AndGiveToTwoStep", async () => {
 
   it("mint cast eth", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     const PRICE = await landNFTToken.PRICE();
 

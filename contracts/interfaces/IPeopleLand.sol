@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface ILootLand {
+interface IPeopleLand {
   struct Land {
     int128 x;
     int128 y;

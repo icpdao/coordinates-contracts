@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 // eslint-disable-next-line node/no-missing-import
-import { LootLand } from "../typechain";
+import { PeopleLand } from "../typechain";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -33,7 +33,7 @@ const expectLand = (
 };
 
 const exceptMintAndGiveTwoStep = async (
-  landContract: LootLand,
+  landContract: PeopleLand,
   minted: SignerWithAddress,
   gived: SignerWithAddress,
   x: any,
@@ -246,14 +246,19 @@ const expectGetEth = async (contract: any, owner: any) => {
   );
 };
 
-describe("LootLand.mintToSelf.error", async () => {
-  it("not in whitelist", async () => {
-    const [deployAcc, owner, w1, wWiiteList1] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+describe("PeopleLand.mintToBuilderByOwner", async () => {
+  it("mint and give", async () => {
+    const [
+      deployAcc,
+      owner,
+      w1
+    ] = await ethers.getSigners();
+    const wList = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     expect(await landNFTToken.owner()).eq(owner.address);
 
@@ -288,226 +293,173 @@ describe("LootLand.mintToSelf.error", async () => {
     expect(await landNFTToken.ownerOf(await landNFTToken.getTokenId(0, 0))).eq(
       w1.address
     );
-
-    await expect(
-      landNFTToken
-        .connect(wWiiteList1)
-        .mintToSelf(
-          100,
-          100,
-          "0xaf6ad62b5e6d1f690412d722469494cc7b34c7471fa095cc710b3fe52e35adab",
-          28,
-          "0xc931735518513b2f345c6ff175d7179c7963746195fcca5682a5e3f644567330",
-          "0x44b459d3ef18347891d13c9cbdd975946dea793b1a5927a88282c05b02ea3820"
-        )
-    ).to.revertedWith("not in whitelist");
-  });
-
-  it("mintself and not gived", async () => {
-    const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
-      owner.address,
-      w1.address
-    )) as LootLand;
-
-    expect(await landNFTToken.owner()).eq(owner.address);
-
-    const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
-    expectLand(
-      givedLandW1,
-      givedLandW1.isMinted,
-      isGived,
-      0,
-      0,
-      "",
-      ZERO_ADDRESS,
-      w1.address,
-      true,
-      true
-    );
-
-    const land0 = await landNFTToken.land(0, 0);
-    expectLand(
-      land0,
-      land0.isMinted,
-      land0.isGived,
-      0,
-      0,
-      "",
-      ZERO_ADDRESS,
-      w1.address,
-      true,
-      true
-    );
-
-    expect(await landNFTToken.ownerOf(await landNFTToken.getTokenId(0, 0))).eq(
-      w1.address
-    );
-
-    await (
-      await landNFTToken
-        .connect(wWiiteList1)
-        .mintToSelf(
-          100,
-          100,
-          "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
-          27,
-          "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
-          "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
-        )
-    ).wait();
-
-    expect(
-      await landNFTToken.connect(wWiiteList1).isPeople(wWiiteList1.address)
-    ).eq(true);
-
-    await expect(
-      landNFTToken.connect(w1).mintAndGiveTo(100, 100, w2.address, {
-        value: BigNumber.from(10).pow(18),
-      })
-    ).to.revertedWith("land is minted");
-    await expect(
-      landNFTToken.connect(w1).mintAndGiveTo(101, 101, wWiiteList1.address, {
-        value: BigNumber.from(10).pow(18),
-      })
-    ).to.revertedWith("givedAddress have gived land");
-  });
-
-  it("gived and not mintself", async () => {
-    const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
-      owner.address,
-      w1.address
-    )) as LootLand;
-
-    expect(await landNFTToken.owner()).eq(owner.address);
-
-    const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
-    expectLand(
-      givedLandW1,
-      givedLandW1.isMinted,
-      isGived,
-      0,
-      0,
-      "",
-      ZERO_ADDRESS,
-      w1.address,
-      true,
-      true
-    );
-
-    const land0 = await landNFTToken.land(0, 0);
-    expectLand(
-      land0,
-      land0.isMinted,
-      land0.isGived,
-      0,
-      0,
-      "",
-      ZERO_ADDRESS,
-      w1.address,
-      true,
-      true
-    );
-
-    expect(await landNFTToken.ownerOf(await landNFTToken.getTokenId(0, 0))).eq(
-      w1.address
-    );
-
-    await (
-      await landNFTToken
-        .connect(w1)
-        .mintAndGiveTo(100, 100, wWiiteList1.address, {
-          value: BigNumber.from(10).pow(18),
-        })
-    ).wait();
-
-    expect(
-      await landNFTToken.connect(wWiiteList1).isPeople(wWiiteList1.address)
-    ).eq(false);
-
-    console.log(wWiiteList1.address)
-    await expect(
-      landNFTToken
-        .connect(wWiiteList1)
-        .mintToSelf(
-          100,
-          100,
-          "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
-          27,
-          "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
-          "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
-        )
-    ).to.revertedWith("caller is minted or have gived");
-
-    await expect(
-      landNFTToken.connect(w1).mintAndGiveTo(100, 100, w2.address, {
-        value: BigNumber.from(10).pow(18),
-      })
-    ).to.revertedWith("land is minted");
-    await expect(
-      landNFTToken.connect(w1).mintAndGiveTo(101, 101, wWiiteList1.address, {
-        value: BigNumber.from(10).pow(18),
-      })
-    ).to.revertedWith("givedAddress have gived land");
-  });
-
-  it("mintToSelf reserved", async () => {
-    const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
-      owner.address,
-      w1.address
-    )) as LootLand;
 
     const data = [
-      [-2, -2],
-      [-2, -1],
-      [-2, 0],
-      [-2, 1],
-      [-2, 2],
+        [-2, -2],
+        [-2, -1],
+        [-2, 0],
+        [-2, 1],
+        [-2, 2],
+  
+        [-1, -2],
+        [-1, -1],
+        [-1, 0],
+        [-1, 1],
+        [-1, 2],
+  
+        [0, -2],
+        [0, -1],
+        [0, 1],
+        [0, 2],
+  
+        [1, -2],
+        [1, -1],
+        [1, 0],
+        [1, 1],
+        [1, 2],
+  
+        [2, -2],
+        [2, -1],
+        [2, 0],
+        [2, 1],
+        [2, 2],
+      ];
+  
+      for(let i = 0; i < data.length; i++) {
+        const xy = data[i];
+        const w = wList[3+i]
 
-      [-1, -2],
-      [-1, -1],
-      [-1, 0],
-      [-1, 1],
-      [-1, 2],
-
-      [0, -2],
-      [0, -1],
-      [0, 1],
-      [0, 2],
-
-      [1, -2],
-      [1, -1],
-      [1, 0],
-      [1, 1],
-      [1, 2],
-
-      [2, -2],
-      [2, -1],
-      [2, 0],
-      [2, 1],
-      [2, 2],
-    ];
-
-    for(let i = 0; i < data.length; i++) {
-      const xy = data[i];
-
-      await expect(
-        landNFTToken
-          .connect(wWiiteList1)
-          .mintToSelf(
+        await (await landNFTToken
+          .connect(owner)
+          .mintToBuilderByOwner(
             xy[0],
             xy[1],
-            "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
-            27,
-            "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
-            "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
-          )
-      ).to.revertedWith("land is reserved");
-    }
+            w.address
+        )).wait()
+       
+        const [isGivedw, givedLandw] = await landNFTToken.givedLand(
+          w.address
+        );
+        expectLand(
+          givedLandw,
+          givedLandw.isMinted,
+          isGivedw,
+          xy[0],
+          xy[1],
+          "",
+          ZERO_ADDRESS,
+          w.address,
+          true,
+          true
+        );
+        const landw = await landNFTToken.land(xy[0], xy[1]);
+        expectLand(
+          landw,
+          landw.isMinted,
+          landw.isGived,
+          xy[0],
+          xy[1],
+          "",
+          ZERO_ADDRESS,
+          w.address,
+          true,
+          true
+        );
+      }
+
+
+    const wb = wList[11];
+    const w2 = wList[30];
+    const w3 = wList[31];
+    const w4 = wList[32];
+    const w5 = wList[33];
+    const w6 = wList[34];
+    const w7 = wList[35];
+    const w8 = wList[36];
+    const w9 = wList[37];
+    const w10 = wList[38];
+    const w11 = wList[39];
+    const w12 = wList[40];
+    const w13 = wList[41];
+    const w14 = wList[42];
+    const w15 = wList[43];
+    await exceptMintAndGiveTwoStep(landNFTToken, wb, w2, 11, -12, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, wb, w3, 12, -13, [
+      [11, -12, w2.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w2, w4, 13, -14, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w2, w5, 14, -15, [
+      [13, -14, w4.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w3, w6, 15, -16, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w3, w7, 16, -17, [
+      [15, -16, w6.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w4, w8, 17, -18, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w4, w9, 18, -19, [
+      [17, -18, w8.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w5, w10, 19, -20, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w5, w11, 20, -21, [
+      [19, -20, w10.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w6, w12, 21, -22, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w6, w13, 22, -23, [
+      [21, -22, w12.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w7, w14, 23, -24, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w7, w15, 24, -25, [
+      [23, -24, w14.address],
+    ]);
+  });
+
+  it("mint cast eth", async () => {
+    const [w1, owner, wWiiteList1, w2, w3] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.deploy(
+      owner.address,
+      w1.address
+    )) as PeopleLand;
+
+    await (
+      await landNFTToken
+        .connect(owner)
+        .mintToBuilderByOwner(
+          1,
+          1,
+          wWiiteList1.address
+        )
+    ).wait();
+
+    const PRICE = await landNFTToken.PRICE();
+
+    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(0);
+
+    await exceptMintCost(
+      PRICE,
+      landNFTToken,
+      11,
+      11,
+      wWiiteList1,
+      BigNumber.from(10).pow(18)
+    );
+    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(PRICE);
+    await exceptMintCost(PRICE, landNFTToken, 12, 12, wWiiteList1, PRICE);
+    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
+      PRICE.mul(2)
+    );
+
+    await (await landNFTToken.connect(wWiiteList1).giveTo(11, 11, w2.address)).wait();
+    await exceptMintCost(PRICE, landNFTToken, 13, 13, w2, PRICE.add(100));
+    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
+      PRICE.mul(3)
+    );
+    await expectGetEth(landNFTToken, owner);
   });
 });

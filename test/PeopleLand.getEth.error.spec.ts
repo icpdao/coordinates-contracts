@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 // eslint-disable-next-line node/no-missing-import
-import { LootLand } from "../typechain";
+import { PeopleLand } from "../typechain";
 
 const GAS_PRICE = 200000000000;
 
@@ -37,33 +37,14 @@ const exceptMint2Cost = async (
   expect(mintAfterEthCon.sub(mintBeforeEthCon)).eq(price);
 };
 
-const expectGetEth = async (contract: any, owner: any, value: any) => {
-  const getEthBeforeEthCon = await ethers.provider.getBalance(contract.address);
-  const getEthBeforeEthOwner = await owner.getBalance();
-
-  const result = await (
-    await contract.connect(owner).getEth(value, {
-      gasPrice: GAS_PRICE,
-    })
-  ).wait();
-  const fee = result.gasUsed.mul(GAS_PRICE);
-  const getEthAfterEthOwner = await owner.getBalance();
-  const getEthAfterEthCon = await ethers.provider.getBalance(contract.address);
-
-  expect(getEthAfterEthCon).eq(getEthBeforeEthCon.sub(value));
-  expect(getEthAfterEthOwner).eq(getEthBeforeEthOwner.add(value).sub(fee));
-};
-
-describe("LootLand.getEth", async () => {
-  it("mint cast eth", async () => {
-    const [deploy, owner, startUp, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.connect(deploy).deploy(
-      owner.address,
-      startUp.address
-    )) as LootLand;
-
-    expect(await landNFTToken.owner()).eq(owner.address);
+describe("PeopleLand.getEth.error", async () => {
+  it("not owner", async () => {
+    const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as PeopleLand;
 
     const PRICE = await landNFTToken.PRICE();
 
@@ -74,9 +55,9 @@ describe("LootLand.getEth", async () => {
       landNFTToken,
       11,
       11,
-      12,
-      12,
-      startUp,
+      22,
+      22,
+      w1,
       w2,
       w3,
       BigNumber.from(10).pow(18)
@@ -114,10 +95,12 @@ describe("LootLand.getEth", async () => {
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(6)
     );
-    await expectGetEth(landNFTToken, owner, PRICE.mul(4));
-    await expectGetEth(landNFTToken, owner, PRICE.mul(2));
-    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
-      0
+
+    await expect(landNFTToken.connect(w2).getAllEth()).to.revertedWith(
+      "Ownable: caller is not the owner"
+    );
+    await expect(landNFTToken.connect(w2).getEth(1)).to.revertedWith(
+      "Ownable: caller is not the owner"
     );
   });
 });

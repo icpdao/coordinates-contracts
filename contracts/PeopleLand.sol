@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./libraries/Utils.sol";
-import "./interfaces/ILootLand.sol";
+import "./interfaces/IPeopleLand.sol";
 
-contract LootLand is ILootLand, ERC721Enumerable, Ownable {
+contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
   Land[] private _lands;
 
   // packedXY => tokenId
@@ -54,7 +54,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   }
 
   constructor(address _owner, address _startUp)
-    ERC721("LootLand", "LOOTLAND")
+    ERC721("People's Land", "PEOPLELAND")
     Ownable()
   {
     transferOwnership(_owner);

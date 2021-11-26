@@ -1,16 +1,16 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { LootLand } from "../typechain";
+import { PeopleLand } from "../typechain";
 
-describe("LootLand.setSlogan.error", async () => {
+describe("PeopleLand.setSlogan.error", async () => {
   it("not owner", async () => {
     const [w1, w2] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     await expect(
       landNFTToken.connect(w1).setSlogan(12, 12, "123")

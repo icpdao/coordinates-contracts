@@ -1,16 +1,16 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { LootLand } from "../typechain";
+import { PeopleLand } from "../typechain";
 
-describe("LootLand.mintAndGiveTo.error", async () => {
+describe("PeopleLand.mintAndGiveTo.error", async () => {
   it("no role", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     await expect(
       landNFTToken
@@ -21,11 +21,11 @@ describe("LootLand.mintAndGiveTo.error", async () => {
 
   it("mintAndGiveTo three", async () => {
     const [w1, w2, w3, w4, w5, w6] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     await (
       await landNFTToken
@@ -64,11 +64,11 @@ describe("LootLand.mintAndGiveTo.error", async () => {
 
   it("mintAndGiveTo repeat", async () => {
     const [w1, w2, w3, w4, w5, w6] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     await (
       await landNFTToken
@@ -134,11 +134,11 @@ describe("LootLand.mintAndGiveTo.error", async () => {
 
   it("mintAndGiveTo gived", async () => {
     const [w1, w2, w3, w4] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     await (
       await landNFTToken
@@ -166,11 +166,11 @@ describe("LootLand.mintAndGiveTo.error", async () => {
 
   it("mintAndGiveTo reserved", async () => {
     const [w1, w2] = await ethers.getSigners();
-    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
       w1.address
-    )) as LootLand;
+    )) as PeopleLand;
 
     const data = [
       [-2, -2],
