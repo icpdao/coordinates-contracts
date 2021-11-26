@@ -21,6 +21,15 @@ interface ILootLand {
     view
     returns (uint8 count);
 
+  function mintToSelf(
+    int128 x,
+    int128 y,
+    bytes32 messageHash,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external payable;
+
   function mint(int128 x, int128 y) external payable;
 
   function mint2(

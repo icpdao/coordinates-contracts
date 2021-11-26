@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 // eslint-disable-next-line node/no-missing-import
 import { LootLand } from "../typechain";
 
-const GAS_PRICE = 3000000000;
+const GAS_PRICE = 200000000000;
 
 const exceptMint2Cost = async (
   price: any,

@@ -1,9 +1,9 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { LootLand } from "../typechain";
-
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+// eslint-disable-next-line node/no-missing-import
+import { LootLand } from "../typechain";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -32,7 +32,7 @@ const expectLand = (
   expect(land.givedAddress).eq(givedAddress);
 };
 
-const exceptMintAndGiveOneStep = async (
+const exceptMintAndGiveTwoStep = async (
   landContract: LootLand,
   minted: SignerWithAddress,
   gived: SignerWithAddress,
@@ -40,7 +40,9 @@ const exceptMintAndGiveOneStep = async (
   y: any,
   minteBefore: any
 ) => {
-  expect(await landContract.mintLandCount(minted.address)).eq(minteBefore.length);
+  expect(await landContract.mintLandCount(minted.address)).eq(
+    minteBefore.length
+  );
   const mintlands = await landContract.getMintLands(minted.address);
   if (minteBefore.length === 0) {
     expect(mintlands.length).eq(0);
@@ -82,15 +84,61 @@ const exceptMintAndGiveOneStep = async (
     false
   );
 
-  await expect(
-    landContract.getTokenId(x, y)
-  ).to.be.revertedWith("not minted");
+  await expect(landContract.getTokenId(x, y)).to.be.revertedWith("not minted");
 
   await (
     await landContract
       .connect(minted)
-      .mintAndGiveTo(x, y, gived.address, { value: BigNumber.from(10).pow(18) })
+      .mint(x, y, { value: BigNumber.from(10).pow(18) })
   ).wait();
+  land = await landContract.land(x, y);
+  expectLand(
+    land,
+    land.isMinted,
+    land.isGived,
+    x,
+    y,
+    "",
+    minted.address,
+    ZERO_ADDRESS,
+    true,
+    false
+  );
+
+  await expect(
+    landContract.ownerOf(await landContract.getTokenId(x, y))
+  ).to.be.revertedWith("ERC721: owner query for nonexistent token");
+
+  expect(await landContract.mintLandCount(minted.address)).eq(
+    minteBefore.length + 1
+  );
+  const mintlands2 = await landContract.getMintLands(minted.address);
+  if (minteBefore.length === 0) {
+    expect(mintlands2.length).eq(1);
+    expect(mintlands2[0].x).eq(x);
+    expect(mintlands2[0].y).eq(y);
+    expect(mintlands2[0].mintedAddress).eq(minted.address);
+    expect(mintlands2[0].givedAddress).eq(ZERO_ADDRESS);
+    expect(mintlands2[0].isMinted).eq(true);
+    expect(mintlands2[0].isGived).eq(false);
+  } else {
+    expect(mintlands2.length).eq(2);
+    expect(mintlands2[0].x).eq(minteBefore[0][0]);
+    expect(mintlands2[0].y).eq(minteBefore[0][1]);
+    expect(mintlands2[0].mintedAddress).eq(minted.address);
+    expect(mintlands2[0].givedAddress).eq(minteBefore[0][2]);
+    expect(mintlands2[0].isMinted).eq(true);
+    expect(mintlands2[0].isGived).eq(true);
+
+    expect(mintlands2[1].x).eq(x);
+    expect(mintlands2[1].y).eq(y);
+    expect(mintlands2[1].mintedAddress).eq(minted.address);
+    expect(mintlands2[1].givedAddress).eq(ZERO_ADDRESS);
+    expect(mintlands2[1].isMinted).eq(true);
+    expect(mintlands2[1].isGived).eq(false);
+  }
+
+  await (await landContract.connect(minted).giveTo(x, y, gived.address)).wait();
 
   expect(await landContract.ownerOf(await landContract.getTokenId(x, y))).eq(
     gived.address
@@ -160,14 +208,13 @@ const exceptMintCost = async (
   x: any,
   y: any,
   minted: any,
-  givedAddress: any,
   ethValue: any
 ) => {
   const mintBeforeEthCon = await ethers.provider.getBalance(contract.address);
   const mintBeforeEthW1 = await minted.getBalance();
 
   const result = await (
-    await contract.connect(minted).mintAndGiveTo(x, y, givedAddress, {
+    await contract.connect(minted).mint(x, y, {
       value: ethValue,
       gasPrice: GAS_PRICE,
     })
@@ -199,15 +246,35 @@ const expectGetEth = async (contract: any, owner: any) => {
   );
 };
 
-describe("LootLand.mintAndGiveToOneStep", async () => {
-  it("mintAndGiveTo", async () => {
-    const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
-      await ethers.getSigners();
+describe("LootLand.mintToSelf", async () => {
+  it("mint to self and mint give to", async () => {
+    const [
+      deployAcc,
+      owner,
+      w1,
+      wWiiteList1,
+      w2,
+      w3,
+      w4,
+      w5,
+      w6,
+      w7,
+      w8,
+      w9,
+      w10,
+      w11,
+      w12,
+      w13,
+      w14,
+      w15,
+    ] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
-    const landNFTToken = (await LandNFTFactory.deploy(
-      w1.address,
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
       w1.address
     )) as LootLand;
+
+    expect(await landNFTToken.owner()).eq(owner.address);
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
     expectLand(
@@ -222,45 +289,123 @@ describe("LootLand.mintAndGiveToOneStep", async () => {
       true,
       true
     );
+
+    const land0 = await landNFTToken.land(0, 0);
+    expectLand(
+      land0,
+      land0.isMinted,
+      land0.isGived,
+      0,
+      0,
+      "",
+      ZERO_ADDRESS,
+      w1.address,
+      true,
+      true
+    );
+
     expect(await landNFTToken.ownerOf(await landNFTToken.getTokenId(0, 0))).eq(
       w1.address
     );
 
-    await exceptMintAndGiveOneStep(landNFTToken, w1, w2, 1, -2, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w1, w3, 2, -3, [[1, -2, w2.address]]);
+    await (
+      await landNFTToken
+        .connect(wWiiteList1)
+        .mintToSelf(
+          100,
+          100,
+          "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
+          27,
+          "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
+          "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
+        )
+    ).wait();
 
-    await exceptMintAndGiveOneStep(landNFTToken, w2, w4, 3, -4, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w2, w5, 4, -5, [[3, -4, w4.address]]);
+    const [isGived2, givedLand2] = await landNFTToken.givedLand(
+      wWiiteList1.address
+    );
+    expectLand(
+      givedLand2,
+      givedLand2.isMinted,
+      isGived2,
+      100,
+      100,
+      "",
+      ZERO_ADDRESS,
+      wWiiteList1.address,
+      true,
+      true
+    );
+    const land100 = await landNFTToken.land(100, 100);
+    expectLand(
+      land100,
+      land100.isMinted,
+      land100.isGived,
+      100,
+      100,
+      "",
+      ZERO_ADDRESS,
+      wWiiteList1.address,
+      true,
+      true
+    );
 
-    await exceptMintAndGiveOneStep(landNFTToken, w3, w6, 5, -6, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w3, w7, 6, -7, [[5, -6, w6.address]]);
+    await exceptMintAndGiveTwoStep(landNFTToken, wWiiteList1, w2, 1, -2, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, wWiiteList1, w3, 2, -3, [
+      [1, -2, w2.address],
+    ]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w4, w8, 7, -8, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w4, w9, 8, -9, [[7, -8, w8.address]]);
+    await exceptMintAndGiveTwoStep(landNFTToken, w2, w4, 3, -4, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w2, w5, 4, -5, [
+      [3, -4, w4.address],
+    ]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w5, w10, 9, -10, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w5, w11, 10, -11, [
+    await exceptMintAndGiveTwoStep(landNFTToken, w3, w6, 5, -6, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w3, w7, 6, -7, [
+      [5, -6, w6.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w4, w8, 7, -8, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w4, w9, 8, -9, [
+      [7, -8, w8.address],
+    ]);
+
+    await exceptMintAndGiveTwoStep(landNFTToken, w5, w10, 9, -10, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w5, w11, 10, -11, [
       [9, -10, w10.address],
     ]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w6, w12, 11, -12, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w6, w13, 12, -13, [
+    await exceptMintAndGiveTwoStep(landNFTToken, w6, w12, 11, -12, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w6, w13, 12, -13, [
       [11, -12, w12.address],
     ]);
 
-    await exceptMintAndGiveOneStep(landNFTToken, w7, w14, 13, -14, []);
-    await exceptMintAndGiveOneStep(landNFTToken, w7, w15, 14, -15, [
+    await exceptMintAndGiveTwoStep(landNFTToken, w7, w14, 13, -14, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w7, w15, 14, -15, [
       [13, -14, w14.address],
     ]);
   });
 
   it("mint cast eth", async () => {
-    const [w1, w2, w3, w4, w5, w6, w7] = await ethers.getSigners();
+    const [w1, wWiiteList1, w2, w3] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("LootLand");
     const landNFTToken = (await LandNFTFactory.deploy(
-      w1.address,
+      wWiiteList1.address,
       w1.address
     )) as LootLand;
+
+    await (
+      await landNFTToken
+        .connect(wWiiteList1)
+        .mintToSelf(
+          100,
+          100,
+          "0xaf6ad62b5e6d1f690412d722469494cc7b34c7471fa095cc710b3fe52e35adab",
+          27,
+          "0x9c1685e3173730206236aedac26f445235eca79e137fbedf4e88599655fc5748",
+          "0x6c519fb9a2b64221702fe271823abba685e7a6d5e5fefae1a42681135b63fb4e"
+        )
+    ).wait();
 
     const PRICE = await landNFTToken.PRICE();
 
@@ -271,34 +416,20 @@ describe("LootLand.mintAndGiveToOneStep", async () => {
       landNFTToken,
       1,
       1,
-      w1,
-      w2.address,
+      wWiiteList1,
       BigNumber.from(10).pow(18)
     );
-    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
-      PRICE
-    );
-    await exceptMintCost(PRICE, landNFTToken, 2, 2, w1, w3.address, PRICE);
+    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(PRICE);
+    await exceptMintCost(PRICE, landNFTToken, 2, 2, wWiiteList1, PRICE);
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)
     );
 
-    await exceptMintCost(
-      PRICE,
-      landNFTToken,
-      3,
-      3,
-      w2,
-      w4.address,
-      PRICE.add(100)
-    );
+    await (await landNFTToken.connect(wWiiteList1).giveTo(1, 1, w2.address)).wait();
+    await exceptMintCost(PRICE, landNFTToken, 3, 3, w2, PRICE.add(100));
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(3)
     );
-    await exceptMintCost(PRICE, landNFTToken, 4, 4, w2, w5.address, PRICE);
-    expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
-      PRICE.mul(4)
-    );
-    await expectGetEth(landNFTToken, w1);
+    await expectGetEth(landNFTToken, wWiiteList1);
   });
 });

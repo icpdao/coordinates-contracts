@@ -7,7 +7,7 @@ import { LootLand } from "../typechain";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-const GAS_PRICE = 300000000;
+const GAS_PRICE = 200000000000;
 
 const expectLand = (
   land: any,

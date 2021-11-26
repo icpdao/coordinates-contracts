@@ -6,6 +6,7 @@ import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "./libraries/Utils.sol";
 import "./interfaces/ILootLand.sol";
 
 contract LootLand is ILootLand, ERC721Enumerable, Ownable {
@@ -27,6 +28,9 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   mapping(address => uint8) public override mintLandCount;
 
   uint256 public constant PRICE = 4669201609102000 wei;
+
+  address public constant SIGN_MESSAGE_ADDRESS =
+    0x9d74d0D4bf55bA7E50a0600b7630c36Cab8A2a69;
 
   modifier hasGived() {
     require(
@@ -51,6 +55,37 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
     emit Mint(0, 0, address(0));
     emit GiveTo(0, 0, _startUp);
+  }
+
+  function mintToSelf(
+    int128 x,
+    int128 y,
+    bytes32 messageHash,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external payable override {
+    require(_verifyWhitelist(messageHash, v, r, s), "not in whitelist");
+
+    require(
+      _lands[_gived[_msgSender()]].givedAddress != _msgSender(),
+      "caller is minted or have gived"
+    );
+
+    uint256 _packedXY = packedXY(x, y);
+    require(!_packedXYToIsMinted[_packedXY], "land is minted");
+
+    _lands.push(Land(x, y, "", address(0), _msgSender(), true, true));
+    uint256 newTokenId = _lands.length - 1;
+
+    _packedXYToIsMinted[_packedXY] = true;
+    _packedXYToTokenId[_packedXY] = newTokenId;
+    _gived[_msgSender()] = newTokenId;
+
+    _safeMint(_msgSender(), newTokenId);
+
+    emit Mint(x, y, address(0));
+    emit GiveTo(x, y, _msgSender());
   }
 
   function mint(int128 x, int128 y) external payable override hasGived {
@@ -533,5 +568,22 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   {
     (string memory sx, string memory sy) = getCoordinatesStrings(x, y);
     _str = string(abi.encodePacked("(", sx, ",", sy, ")"));
+  }
+
+  function _verifyWhitelist(
+    bytes32 messageHash,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) private view returns (bool pass) {
+    bytes32 reMessageHash = keccak256(
+      abi.encodePacked(
+        "\x19Ethereum Signed Message:\n42",
+        Utils.toString(_msgSender())
+      )
+    );
+
+    pass = (ecrecover(messageHash, v, r, s) == SIGN_MESSAGE_ADDRESS &&
+      reMessageHash == messageHash);
   }
 }
