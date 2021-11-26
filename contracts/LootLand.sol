@@ -27,6 +27,8 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
   // mintedAddress => mint count
   mapping(address => uint8) public override mintLandCount;
 
+  mapping(address => bool) public override isPeople;
+
   uint256 public constant PRICE = 4669201609102000 wei;
 
   address public constant SIGN_MESSAGE_ADDRESS =
@@ -38,6 +40,16 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
         _lands[_gived[_msgSender()]].givedAddress == _msgSender(),
       "caller is no gived"
     );
+    _;
+  }
+
+  modifier notReserved(int128 x, int128 y) {
+    require((x > 2 || x < -2) && (y > 2 || y < -2), "land is reserved");
+    _;
+  }
+
+  modifier isReserved(int128 x, int128 y) {
+    require((x < 3 && x > -3) && (y < 3 || y > -3), "land is not reserved");
     _;
   }
 
@@ -64,7 +76,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     uint8 v,
     bytes32 r,
     bytes32 s
-  ) external payable override {
+  ) external payable override notReserved(x, y) {
     require(_verifyWhitelist(messageHash, v, r, s), "not in whitelist");
 
     require(
@@ -74,6 +86,8 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
     uint256 _packedXY = packedXY(x, y);
     require(!_packedXYToIsMinted[_packedXY], "land is minted");
+
+    isPeople[_msgSender()] = true;
 
     _lands.push(Land(x, y, "", address(0), _msgSender(), true, true));
     uint256 newTokenId = _lands.length - 1;
@@ -86,6 +100,32 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
 
     emit Mint(x, y, address(0));
     emit GiveTo(x, y, _msgSender());
+  }
+
+  function mintToBuilderByOwner(
+    int128 x,
+    int128 y,
+    address givedAddress
+  ) external payable override onlyOwner isReserved(x, y) {
+    require(
+      _lands[_gived[givedAddress]].givedAddress != givedAddress,
+      "givedAddress is minted or have gived"
+    );
+
+    uint256 _packedXY = packedXY(x, y);
+    require(!_packedXYToIsMinted[_packedXY], "land is minted");
+
+    _lands.push(Land(x, y, "", address(0), givedAddress, true, true));
+    uint256 newTokenId = _lands.length - 1;
+
+    _packedXYToIsMinted[_packedXY] = true;
+    _packedXYToTokenId[_packedXY] = newTokenId;
+    _gived[givedAddress] = newTokenId;
+
+    _safeMint(givedAddress, newTokenId);
+
+    emit Mint(x, y, address(0));
+    emit GiveTo(x, y, givedAddress);
   }
 
   function mint(int128 x, int128 y) external payable override hasGived {
@@ -400,7 +440,7 @@ contract LootLand is ILootLand, ERC721Enumerable, Ownable {
     }
   }
 
-  function _mintWithoutEth(int128 x, int128 y) private {
+  function _mintWithoutEth(int128 x, int128 y) private notReserved(x, y) {
     require(mintLandCount[_msgSender()] < 2, "caller is already minted");
 
     uint256 _packedXY = packedXY(x, y);

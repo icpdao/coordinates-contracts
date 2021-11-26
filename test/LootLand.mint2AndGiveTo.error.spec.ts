@@ -15,7 +15,7 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
     await expect(
       landNFTToken
         .connect(w2)
-        .mint2AndGiveTo(1, 1, w3.address, 2,2, w4.address,{ value: BigNumber.from(10).pow(18) })
+        .mint2AndGiveTo(11, 11, w3.address, 12, 12, w4.address,{ value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is no gived");
   });
 
@@ -30,25 +30,25 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mint2AndGiveTo(1, 1, w2.address, 2,2, w3.address,{ value: BigNumber.from(10).pow(18) })
+        .mint2AndGiveTo(11, 11, w2.address, 12, 12, w3.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w1)
-        .mint2AndGiveTo(3, 3, w4.address, 4, 4, w5.address,{ value: BigNumber.from(10).pow(18) })
+        .mint2AndGiveTo(13, 13, w4.address, 14, 14, w5.address,{ value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
 
     await (
       await landNFTToken
         .connect(w2)
-        .mint2AndGiveTo(5, 5, w4.address, 6, 6, w5.address,{ value: BigNumber.from(10).pow(18) })
+        .mint2AndGiveTo(15, 15, w4.address, 16, 16, w5.address,{ value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w2)
-        .mint2AndGiveTo(7, 7, w6.address, 8, 8, w7.address, {
+        .mint2AndGiveTo(17, 17, w6.address, 18, 18, w7.address, {
           value: BigNumber.from(10).pow(18),
         })
     ).to.revertedWith("caller is already minted");
@@ -65,27 +65,77 @@ describe("LootLand.mint2AndGiveTo.error", async () => {
     await (
       await landNFTToken
         .connect(w1)
-        .mintAndGiveTo(1, 1, w2.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(11, 11, w2.address, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w1)
-        .mint2AndGiveTo(3, 3, w4.address, 4, 4, w5.address,{ value: BigNumber.from(10).pow(18) })
+        .mint2AndGiveTo(13, 13, w4.address, 14, 14, w5.address,{ value: BigNumber.from(10).pow(18) })
     ).to.revertedWith("caller is already minted");
 
     await (
       await landNFTToken
         .connect(w2)
-        .mintAndGiveTo(5, 5, w4.address, { value: BigNumber.from(10).pow(18) })
+        .mintAndGiveTo(15, 15, w4.address, { value: BigNumber.from(10).pow(18) })
     ).wait();
 
     await expect(
       landNFTToken
         .connect(w2)
-        .mint2AndGiveTo(7, 7, w6.address, 8, 8, w7.address, {
+        .mint2AndGiveTo(17, 17, w6.address, 18, 18, w7.address, {
           value: BigNumber.from(10).pow(18),
         })
     ).to.revertedWith("caller is already minted");
+  });
+
+  it("mint2AndGiveTo reserved", async () => {
+    const [w1, w2, w3] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address
+    )) as LootLand;
+
+    const data = [
+      [-2, -2],
+      [-2, -1],
+      [-2, 0],
+      [-2, 1],
+      [-2, 2],
+
+      [-1, -2],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+      [-1, 2],
+
+      [0, -2],
+      [0, -1],
+      [0, 1],
+      [0, 2],
+
+      [1, -2],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [1, 2],
+
+      [2, -2],
+      [2, -1],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ];
+
+    for(let i = 0; i < data.length; i++) {
+      const xy = data[i];
+
+      await expect(
+        landNFTToken
+          .connect(w1)
+          .mint2AndGiveTo(xy[0], xy[1], w2.address, 100, 100, w3.address, { value: BigNumber.from(10).pow(18) })
+      ).to.revertedWith("land is reserved");
+    }
   });
 });

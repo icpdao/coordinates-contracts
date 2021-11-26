@@ -358,6 +358,10 @@ describe("LootLand.mintToSelf.error", async () => {
         )
     ).wait();
 
+    expect(
+      await landNFTToken.connect(wWiiteList1).isPeople(wWiiteList1.address)
+    ).eq(true);
+
     await expect(
       landNFTToken.connect(w1).mintAndGiveTo(100, 100, w2.address, {
         value: BigNumber.from(10).pow(18),
@@ -420,6 +424,10 @@ describe("LootLand.mintToSelf.error", async () => {
         })
     ).wait();
 
+    expect(
+      await landNFTToken.connect(wWiiteList1).isPeople(wWiiteList1.address)
+    ).eq(false);
+
     console.log(wWiiteList1.address)
     await expect(
       landNFTToken
@@ -444,5 +452,62 @@ describe("LootLand.mintToSelf.error", async () => {
         value: BigNumber.from(10).pow(18),
       })
     ).to.revertedWith("givedAddress have gived land");
+  });
+
+  it("mintToSelf reserved", async () => {
+    const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("LootLand");
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
+      w1.address
+    )) as LootLand;
+
+    const data = [
+      [-2, -2],
+      [-2, -1],
+      [-2, 0],
+      [-2, 1],
+      [-2, 2],
+
+      [-1, -2],
+      [-1, -1],
+      [-1, 0],
+      [-1, 1],
+      [-1, 2],
+
+      [0, -2],
+      [0, -1],
+      [0, 1],
+      [0, 2],
+
+      [1, -2],
+      [1, -1],
+      [1, 0],
+      [1, 1],
+      [1, 2],
+
+      [2, -2],
+      [2, -1],
+      [2, 0],
+      [2, 1],
+      [2, 2],
+    ];
+
+    for(let i = 0; i < data.length; i++) {
+      const xy = data[i];
+
+      await expect(
+        landNFTToken
+          .connect(wWiiteList1)
+          .mintToSelf(
+            xy[0],
+            xy[1],
+            "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
+            27,
+            "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
+            "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
+          )
+      ).to.revertedWith("land is reserved");
+    }
   });
 });

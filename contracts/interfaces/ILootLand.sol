@@ -21,6 +21,8 @@ interface ILootLand {
     view
     returns (uint8 count);
 
+  function isPeople(address addr) external view returns (bool);
+
   function mintToSelf(
     int128 x,
     int128 y,
@@ -28,6 +30,12 @@ interface ILootLand {
     uint8 v,
     bytes32 r,
     bytes32 s
+  ) external payable;
+
+  function mintToBuilderByOwner(
+    int128 x,
+    int128 y,
+    address givedAddress
   ) external payable;
 
   function mint(int128 x, int128 y) external payable;

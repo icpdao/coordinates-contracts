@@ -278,30 +278,30 @@ describe("LootLand.mint2AndGiveToOneStep", async () => {
       w1.address
     );
 
-    await exceptMint2AndGiveOneStep(landNFTToken, w1, w2, w3, 1, -2, 2, -3);
-    await exceptMint2AndGiveOneStep(landNFTToken, w2, w4, w5, 3, -4, 4, -5);
-    await exceptMint2AndGiveOneStep(landNFTToken, w3, w6, w7, 5, -6, 6, -7);
-    await exceptMint2AndGiveOneStep(landNFTToken, w4, w8, w9, 7, -8, 8, -9);
-    await exceptMint2AndGiveOneStep(landNFTToken, w5, w10, w11, 9, -10, 10, -11);
+    await exceptMint2AndGiveOneStep(landNFTToken, w1, w2, w3, 11, -12, 12, -13);
+    await exceptMint2AndGiveOneStep(landNFTToken, w2, w4, w5, 13, -14, 14, -15);
+    await exceptMint2AndGiveOneStep(landNFTToken, w3, w6, w7, 15, -16, 16, -17);
+    await exceptMint2AndGiveOneStep(landNFTToken, w4, w8, w9, 17, -18, 18, -19);
+    await exceptMint2AndGiveOneStep(landNFTToken, w5, w10, w11, 19, -20, 20, -21);
     await exceptMint2AndGiveOneStep(
       landNFTToken,
       w6,
       w12,
       w13,
-      11,
-      -12,
-      12,
-      -13
+      21,
+      -22,
+      22,
+      -23
     );
     await exceptMint2AndGiveOneStep(
       landNFTToken,
       w7,
       w14,
       w15,
-      13,
-      -14,
-      14,
-      -15
+      23,
+      -24,
+      24,
+      -25
     );
   });
 
@@ -320,10 +320,10 @@ describe("LootLand.mint2AndGiveToOneStep", async () => {
     await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
-      1,
-      1,
-      2,
-      2,
+      11,
+      11,
+      12,
+      12,
       w1,
       w2,
       w3,
@@ -335,10 +335,10 @@ describe("LootLand.mint2AndGiveToOneStep", async () => {
     await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
-      3,
-      3,
-      4,
-      4,
+      13,
+      13,
+      14,
+      14,
       w2,
       w4,
       w5,
@@ -350,10 +350,10 @@ describe("LootLand.mint2AndGiveToOneStep", async () => {
     await exceptMint2Cost(
       PRICE.mul(2),
       landNFTToken,
-      5,
-      5,
-      6,
-      6,
+      15,
+      15,
+      16,
+      16,
       w3,
       w6,
       w7,

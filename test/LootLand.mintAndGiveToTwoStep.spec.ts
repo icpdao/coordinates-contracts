@@ -289,39 +289,39 @@ describe("LootLand.mintAndGiveToTwoStep", async () => {
       w1.address
     );
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w1, w2, 1, -2, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w1, w3, 2, -3, [
-      [1, -2, w2.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w1, w2, 11, -12, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w1, w3, 12, -13, [
+      [11, -12, w2.address],
     ]);
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w2, w4, 3, -4, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w2, w5, 4, -5, [
-      [3, -4, w4.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w2, w4, 13, -14, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w2, w5, 14, -15, [
+      [13, -14, w4.address],
     ]);
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w3, w6, 5, -6, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w3, w7, 6, -7, [
-      [5, -6, w6.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w3, w6, 15, -16, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w3, w7, 16, -17, [
+      [15, -16, w6.address],
     ]);
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w4, w8, 7, -8, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w4, w9, 8, -9, [
-      [7, -8, w8.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w4, w8, 17, -18, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w4, w9, 18, -19, [
+      [17, -18, w8.address],
     ]);
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w5, w10, 9, -10, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w5, w11, 10, -11, [
-      [9, -10, w10.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w5, w10, 19, -20, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w5, w11, 20, -21, [
+      [19, -20, w10.address],
     ]);
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w6, w12, 11, -12, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w6, w13, 12, -13, [
-      [11, -12, w12.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w6, w12, 21, -22, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w6, w13, 22, -23, [
+      [21, -22, w12.address],
     ]);
 
-    await exceptMintAndGiveTwoStep(landNFTToken, w7, w14, 13, -14, []);
-    await exceptMintAndGiveTwoStep(landNFTToken, w7, w15, 14, -15, [
-      [13, -14, w14.address],
+    await exceptMintAndGiveTwoStep(landNFTToken, w7, w14, 23, -24, []);
+    await exceptMintAndGiveTwoStep(landNFTToken, w7, w15, 24, -25, [
+      [23, -24, w14.address],
     ]);
   });
 
@@ -340,19 +340,19 @@ describe("LootLand.mintAndGiveToTwoStep", async () => {
     await exceptMintCost(
       PRICE,
       landNFTToken,
-      1,
-      1,
+      11,
+      11,
       w1,
       BigNumber.from(10).pow(18)
     );
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(PRICE);
-    await exceptMintCost(PRICE, landNFTToken, 2, 2, w1, PRICE);
+    await exceptMintCost(PRICE, landNFTToken, 12, 12, w1, PRICE);
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)
     );
 
-    await (await landNFTToken.connect(w1).giveTo(1, 1, w2.address)).wait();
-    await exceptMintCost(PRICE, landNFTToken, 3, 3, w2, PRICE.add(100));
+    await (await landNFTToken.connect(w1).giveTo(11, 11, w2.address)).wait();
+    await exceptMintCost(PRICE, landNFTToken, 13, 13, w2, PRICE.add(100));
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(3)
     );
