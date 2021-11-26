@@ -24,14 +24,14 @@ const deployByHardwareWallet = async (
   console.log("startUp", startUp);
   console.log("gasPrice", gasGwei, "gwei");
 
-  const LootLand = await ethers.getContractFactory("LootLand", ledger);
+  const PeopleLand = await ethers.getContractFactory("PeopleLand", ledger);
   const gasPrice = BigNumber.from(10).pow(9).mul(gasGwei);
-  const lootLand = await LootLand.connect(ledger).deploy(owner, startUp, {
+  const land = await PeopleLand.connect(ledger).deploy(owner, startUp, {
     gasPrice: gasPrice,
   });
   console.log("deploy...");
-  await lootLand.deployed();
-  console.log("LootLand deployed to:", lootLand.address);
+  await land.deployed();
+  console.log("PeopleLand deployed to:", land.address);
 };
 
 const deployByEnvAccount = async (owner: any, startUp: any, gasGwei: any) => {
@@ -41,14 +41,14 @@ const deployByEnvAccount = async (owner: any, startUp: any, gasGwei: any) => {
   console.log("startUp", startUp);
   console.log("gasPrice", gasGwei, "gwei");
 
-  const LootLand = await ethers.getContractFactory("LootLand");
+  const PeopleLand = await ethers.getContractFactory("PeopleLand");
   const gasPrice = BigNumber.from(10).pow(9).mul(gasGwei);
-  const lootLand = await LootLand.connect(wDeploy).deploy(owner, startUp, {
+  const land = await PeopleLand.connect(wDeploy).deploy(owner, startUp, {
     gasPrice: gasPrice,
   });
   console.log("deploy...");
-  await lootLand.deployed();
-  console.log("LootLand deployed to:", lootLand.address);
+  await land.deployed();
+  console.log("PeopleLand deployed to:", land.address);
 };
 
 async function main() {
@@ -61,8 +61,8 @@ async function main() {
 
   // We get the contract to deploy
 
-  const owner = "0x04493be637f6ED9b527A8BFe9fC4c277734Ef412";
-  const startUp = "0x26Ac833AEde4ee4b330E7A67b57F4eaB40B65E5c";
+  const owner = "0x3946d96a4b46657ca95CBE85d8a60b822186Ad1f";
+  const startUp = "0x3946d96a4b46657ca95CBE85d8a60b822186Ad1f";
   const ledgerIndex = 2; // Ledger from 0 start
   const gasGwei = 3;
 
