@@ -84,7 +84,7 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     uint8 v,
     bytes32 r,
     bytes32 s
-  ) external payable override notReserved(x, y) {
+  ) external override notReserved(x, y) {
     require(_verifyWhitelist(messageHash, v, r, s), "not in whitelist");
 
     require(
@@ -114,7 +114,7 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     int128 x,
     int128 y,
     address givedAddress
-  ) external payable override onlyOwner isReserved(x, y) {
+  ) external override onlyOwner isReserved(x, y) {
     require(
       _lands[_gived[givedAddress]].givedAddress != givedAddress,
       "givedAddress is minted or have gived"

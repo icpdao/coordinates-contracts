@@ -30,13 +30,13 @@ interface IPeopleLand {
     uint8 v,
     bytes32 r,
     bytes32 s
-  ) external payable;
+  ) external;
 
   function mintToBuilderByOwner(
     int128 x,
     int128 y,
     address givedAddress
-  ) external payable;
+  ) external;
 
   function mint(int128 x, int128 y) external payable;
 
