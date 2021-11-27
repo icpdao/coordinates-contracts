@@ -103,7 +103,7 @@ describe("PeopleLand.tokenid", async () => {
             dataList[i].gived2XY[0],
             dataList[i].gived2XY[1],
             dataList[i].gived2.address,
-            { value: BigNumber.from(10).pow(18) }
+            { value: BigNumber.from(10).pow(18).mul(2) }
           )
       ).wait();
     }

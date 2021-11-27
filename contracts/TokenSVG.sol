@@ -85,7 +85,6 @@ contract TokenSVG is ITokenSVG {
     parts[12] = _getEndTip(meta.mintedAndInvitedList.length);
     parts[13] = "</li></ul></div></div></body></foreignObject></svg>";
 
-    // TODO image base64 size
     string memory svgStr = string(
       abi.encodePacked(
         parts[0],
@@ -111,7 +110,6 @@ contract TokenSVG is ITokenSVG {
       )
     );
 
-    // TODO description
     string memory json = Base64.encode(
       bytes(
         string(

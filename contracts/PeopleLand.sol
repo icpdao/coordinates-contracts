@@ -34,7 +34,7 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
   address public override tokenSVGAddress;
 
   // TODO ??
-  uint256 public constant PRICE = 4669201609102000 wei;
+  uint256 public constant PRICE = 0.66 ether;
 
   address public constant SIGN_MESSAGE_ADDRESS =
     0x9d74d0D4bf55bA7E50a0600b7630c36Cab8A2a69;

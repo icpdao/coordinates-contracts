@@ -115,7 +115,7 @@ const exceptMint2AndGiveOneStep = async (
     await landContract
       .connect(minted)
       .mint2AndGiveTo(x1, y1, gived1.address, x2, y2, gived2.address, {
-        value: BigNumber.from(10).pow(18),
+        value: BigNumber.from(10).pow(18).mul(2),
       })
   ).wait();
   // expect
@@ -329,7 +329,7 @@ describe("PeopleLand.mint2AndGiveToOneStep", async () => {
       w1,
       w2,
       w3,
-      BigNumber.from(10).pow(18)
+      BigNumber.from(10).pow(18).mul(2)
     );
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)

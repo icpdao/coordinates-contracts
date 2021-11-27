@@ -61,7 +61,7 @@ describe("PeopleLand.getEth.error", async () => {
       w1,
       w2,
       w3,
-      BigNumber.from(10).pow(18)
+      BigNumber.from(10).pow(18).mul(2)
     );
     expect(await ethers.provider.getBalance(landNFTToken.address)).eq(
       PRICE.mul(2)
