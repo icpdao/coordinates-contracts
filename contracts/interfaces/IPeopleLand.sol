@@ -25,6 +25,8 @@ interface IPeopleLand {
 
   function isBuilder(address addr) external view returns (bool);
 
+  function tokenSVGAddress() external view returns (address);
+
   function mintToSelf(
     int128 x,
     int128 y,
@@ -104,7 +106,7 @@ interface IPeopleLand {
 
   function getCoordinatesStrings(int128 x, int128 y)
     external
-    pure
+    view
     returns (string memory sx, string memory sy);
 
   function packedXY(int128 x, int128 y)

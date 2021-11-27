@@ -303,6 +303,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -423,6 +424,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       wWiiteList1.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -475,6 +477,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -507,6 +510,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -539,6 +543,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -571,6 +576,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -603,6 +609,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -635,6 +642,7 @@ describe("PeopleLand.mintToSelf", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 

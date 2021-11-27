@@ -252,6 +252,7 @@ describe("PeopleLand.mintAndGiveToTwoStep", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -330,6 +331,7 @@ describe("PeopleLand.mintAndGiveToTwoStep", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -411,6 +413,7 @@ describe("PeopleLand.mintAndGiveToTwoStep", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
       w1.address,
       w1.address
     )) as PeopleLand;

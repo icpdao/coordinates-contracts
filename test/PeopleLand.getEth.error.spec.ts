@@ -43,7 +43,8 @@ describe("PeopleLand.getEth.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     const PRICE = await landNFTToken.PRICE();

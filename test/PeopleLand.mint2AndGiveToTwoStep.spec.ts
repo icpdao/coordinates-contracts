@@ -336,7 +336,8 @@ describe("PeopleLand.mint2AndGiveToTwoStep", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
@@ -388,7 +389,8 @@ describe("PeopleLand.mint2AndGiveToTwoStep", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     const PRICE = await landNFTToken.PRICE();

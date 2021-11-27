@@ -9,7 +9,8 @@ describe("PeopleLand.mintAndGiveTo.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     await expect(
@@ -24,7 +25,8 @@ describe("PeopleLand.mintAndGiveTo.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     await (
@@ -67,7 +69,8 @@ describe("PeopleLand.mintAndGiveTo.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     await (
@@ -137,7 +140,8 @@ describe("PeopleLand.mintAndGiveTo.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
     await (
@@ -169,7 +173,8 @@ describe("PeopleLand.mintAndGiveTo.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      w1.address,
     )) as PeopleLand;
 
 

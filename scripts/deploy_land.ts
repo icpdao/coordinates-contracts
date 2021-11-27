@@ -10,6 +10,7 @@ import { LedgerSigner } from "@ethersproject/hardware-wallets";
 const deployByHardwareWallet = async (
   owner: any,
   startUp: any,
+  svg: any,
   gasGwei: any,
   ledgerIndex: any
 ) => {
@@ -20,13 +21,14 @@ const deployByHardwareWallet = async (
   );
 
   console.log("deploy use ledger account", await ledger.getAddress());
-  console.log("owner", owner);
-  console.log("startUp", startUp);
+  console.log("owner ", owner);
+  console.log("startUp ", startUp);
+  console.log("svg ", svg);
   console.log("gasPrice", gasGwei, "gwei");
 
   const PeopleLand = await ethers.getContractFactory("PeopleLand", ledger);
   const gasPrice = BigNumber.from(10).pow(9).mul(gasGwei);
-  const land = await PeopleLand.connect(ledger).deploy(owner, startUp, {
+  const land = await PeopleLand.connect(ledger).deploy(owner, startUp, svg, {
     gasPrice: gasPrice,
   });
   console.log("deploy...");
@@ -34,16 +36,17 @@ const deployByHardwareWallet = async (
   console.log("PeopleLand deployed to:", land.address);
 };
 
-const deployByEnvAccount = async (owner: any, startUp: any, gasGwei: any) => {
+const deployByEnvAccount = async (owner: any, startUp: any, svg: any, gasGwei: any) => {
   const [wDeploy] = await ethers.getSigners();
   console.log("deploy use env account", wDeploy.address);
-  console.log("owner", owner);
-  console.log("startUp", startUp);
+  console.log("owner ", owner);
+  console.log("startUp ", startUp);
+  console.log("svg ", svg);
   console.log("gasPrice", gasGwei, "gwei");
 
   const PeopleLand = await ethers.getContractFactory("PeopleLand");
   const gasPrice = BigNumber.from(10).pow(9).mul(gasGwei);
-  const land = await PeopleLand.connect(wDeploy).deploy(owner, startUp, {
+  const land = await PeopleLand.connect(wDeploy).deploy(owner, startUp, svg, {
     gasPrice: gasPrice,
   });
   console.log("deploy...");
@@ -61,12 +64,13 @@ async function main() {
 
   // We get the contract to deploy
 
-  const owner = "0x3946d96a4b46657ca95CBE85d8a60b822186Ad1f";
-  const startUp = "0x3946d96a4b46657ca95CBE85d8a60b822186Ad1f";
+  const owner = "";
+  const startUp = "";
+  const svg = "";
   const ledgerIndex = 2; // Ledger from 0 start
   const gasGwei = 3;
 
-  await deployByEnvAccount(owner, startUp, gasGwei);
+  await deployByEnvAccount(owner, startUp, svg, gasGwei);
   // await deployByHardwareWallet(owner, startUp, gasGwei, ledgerIndex);
 }
 

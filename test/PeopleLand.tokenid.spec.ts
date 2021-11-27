@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { PeopleLand } from "../typechain";
+import { PeopleLand, TokenSVG } from "../typechain";
 import * as fs from "fs";
 
 const showXY = async (contract: any, x: any, y: any, title: any) => {
@@ -10,6 +10,8 @@ const showXY = async (contract: any, x: any, y: any, title: any) => {
   let str: string = content.split(",")[1];
   let buff = Buffer.from(str, "base64");
   str = buff.toString("ascii");
+  const desc = JSON.parse(str).description;
+  console.log("desc ", desc);
   str = JSON.parse(str).image;
   str = str.split(",")[1];
   buff = Buffer.from(str, "base64");
@@ -25,10 +27,15 @@ describe("PeopleLand.tokenid", async () => {
   it("generate tokenid", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11] =
       await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
@@ -122,10 +129,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("coordinates string", async () => {
     const [w1] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
@@ -180,10 +192,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("token uri sologan", async () => {
     const [w1, w2] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     await showXY(landNFTToken, 0, 0, "slogan__0_0_no_slogan");
@@ -207,10 +224,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("token uri invited", async () => {
     const [w1, w2, w3] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     await showXY(landNFTToken, 0, 0, "001_invited__0_0");
@@ -234,10 +256,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("token uri mint and giveto", async () => {
     const [w1, w2, w3, w4, w5] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     await showXY(landNFTToken, 0, 0, "004_mint_and_giveto__0_0_no");
@@ -309,10 +336,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("token uri mint and giveto 2", async () => {
     const [w1, w2, w3, w4, w5] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     await showXY(landNFTToken, 0, 0, "014_mint_and_giveto2__0_0_no");
@@ -338,10 +370,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("token uri mint and neighbors", async () => {
     const [owner, w1, w2, w3, w4, w5, w6, w7, w8, w9] = await ethers.getSigners();
+    
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       owner.address,
-      owner.address
+      owner.address,
+      tokenSVG.address
     )) as PeopleLand;
 
     await showXY(landNFTToken, 0, 0, "018_neighbors__0_0_no");
@@ -397,10 +434,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("token uri mint and neighbors 2", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     const x = 110;
@@ -464,10 +506,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("neighbors outside 1", async () => {
     const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       w1.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     const INT128_MIN = BigNumber.from(2).pow(127).mul(-1);
@@ -525,10 +572,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("is people", async () => {
     const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     await (
@@ -549,10 +601,15 @@ describe("PeopleLand.tokenid", async () => {
 
   it("is build", async () => {
     const [deployAcc, owner, w1, w2] = await ethers.getSigners();
+
+    const TokenSVGFactory = await ethers.getContractFactory("TokenSVG");
+    const tokenSVG = (await TokenSVGFactory.deploy()) as TokenSVG;
+    
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
-      w1.address
+      w1.address,
+      tokenSVG.address,
     )) as PeopleLand;
 
     await (

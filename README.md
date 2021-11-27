@@ -4,10 +4,11 @@ Imagine a world without authority,Imagine everyone can create freely,You may say
 
 ### deploy test
 ```
-yarn run hardhat run --network rinkeby scripts/deploy.ts
+yarn run hardhat run --network rinkeby scripts/deploy_svg.ts
+yarn run hardhat run --network rinkeby scripts/deploy_land.ts
 ```
 
 ### etherscan verify
 ```
-yarn run hardhat verify --network rinkeby contractAddress "ownerAddress" "startUpAddress"
+yarn run hardhat verify --network rinkeby contractAddress "ownerAddress" "startUpAddress" "svgAddress" 
 ```

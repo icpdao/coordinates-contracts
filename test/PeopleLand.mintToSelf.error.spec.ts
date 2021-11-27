@@ -252,6 +252,7 @@ describe("PeopleLand.mintToSelf.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -308,6 +309,7 @@ describe("PeopleLand.mintToSelf.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -379,6 +381,7 @@ describe("PeopleLand.mintToSelf.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -459,6 +462,7 @@ describe("PeopleLand.mintToSelf.error", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 

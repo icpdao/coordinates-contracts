@@ -257,6 +257,7 @@ describe("PeopleLand.mintToBuilderByOwner", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 
@@ -428,6 +429,7 @@ describe("PeopleLand.mintToBuilderByOwner", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.deploy(
       owner.address,
+      w1.address,
       w1.address
     )) as PeopleLand;
 

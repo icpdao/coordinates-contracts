@@ -60,7 +60,8 @@ describe("PeopleLand.getEth", async () => {
     const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
     const landNFTToken = (await LandNFTFactory.connect(deploy).deploy(
       owner.address,
-      startUp.address
+      startUp.address,
+      owner.address,
     )) as PeopleLand;
 
     expect(await landNFTToken.owner()).eq(owner.address);
