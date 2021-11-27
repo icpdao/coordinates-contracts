@@ -307,6 +307,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
     expect(await landNFTToken.owner()).eq(owner.address);
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
@@ -428,6 +430,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(wWiiteList1).openMintSelfSwitch()).wait();
+
     await (
       await landNFTToken
         .connect(wWiiteList1)
@@ -481,6 +485,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
     expect(await landNFTToken.owner()).eq(owner.address);
 
     const [x, y] = [31, -31];
@@ -513,6 +519,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address,
       w1.address
     )) as PeopleLand;
+
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
 
     expect(await landNFTToken.owner()).eq(owner.address);
 
@@ -547,6 +555,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
     expect(await landNFTToken.owner()).eq(owner.address);
 
     const [x, y] = [0, 3];
@@ -579,6 +589,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address,
       w1.address
     )) as PeopleLand;
+
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
 
     expect(await landNFTToken.owner()).eq(owner.address);
 
@@ -613,6 +625,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
     expect(await landNFTToken.owner()).eq(owner.address);
 
     const [x, y] = [3, 0];
@@ -645,6 +659,8 @@ describe("PeopleLand.mintToSelf", async () => {
       w1.address,
       w1.address
     )) as PeopleLand;
+
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
 
     expect(await landNFTToken.owner()).eq(owner.address);
 

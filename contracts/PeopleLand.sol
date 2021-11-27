@@ -33,11 +33,12 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
 
   address public override tokenSVGAddress;
 
-  // TODO ??
   uint256 public constant PRICE = 0.66 ether;
 
   address public constant SIGN_MESSAGE_ADDRESS =
     0x9d74d0D4bf55bA7E50a0600b7630c36Cab8A2a69;
+
+  bool public mintSelfSwitch;
 
   modifier hasGived() {
     require(
@@ -94,6 +95,8 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     bytes32 r,
     bytes32 s
   ) external override notReserved(x, y) {
+    require(mintSelfSwitch, "close");
+
     require(_verifyWhitelist(messageHash, v, r, s), "not in whitelist");
 
     require(
@@ -124,27 +127,16 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     int128 y,
     address givedAddress
   ) external override onlyOwner isReserved(x, y) {
-    require(
-      _lands[_gived[givedAddress]].givedAddress != givedAddress,
-      "givedAddress is minted or have gived"
-    );
+    _mintToBuilderByOwner(x, y, givedAddress, "");
+  }
 
-    uint256 _packedXY = packedXY(x, y);
-    require(!_packedXYToIsMinted[_packedXY], "land is minted");
-
-    _lands.push(Land(x, y, "", address(0), givedAddress, true, true));
-    uint256 newTokenId = _lands.length - 1;
-
-    _packedXYToIsMinted[_packedXY] = true;
-    _packedXYToTokenId[_packedXY] = newTokenId;
-    _gived[givedAddress] = newTokenId;
-
-    _safeMint(givedAddress, newTokenId);
-
-    isBuilder[givedAddress] = true;
-
-    emit Mint(x, y, address(0));
-    emit GiveTo(x, y, givedAddress);
+  function mintToBuilderByOwnerWithSlogan(
+    int128 x,
+    int128 y,
+    address givedAddress,
+    string memory slogan
+  ) external override onlyOwner isReserved(x, y) {
+    _mintToBuilderByOwner(x, y, givedAddress, slogan);
   }
 
   function mint(int128 x, int128 y) external payable override hasGived {
@@ -165,7 +157,7 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     int128 y,
     address givedAddress
   ) external override hasGived {
-    _giveTo(x, y, givedAddress);
+    _giveTo(x, y, givedAddress, "");
   }
 
   function mintAndGiveTo(
@@ -174,7 +166,17 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     address givedAddress
   ) external payable override hasGived {
     _mint(x, y);
-    _giveTo(x, y, givedAddress);
+    _giveTo(x, y, givedAddress, "");
+  }
+
+  function mintAndGiveToWithSlogan(
+    int128 x,
+    int128 y,
+    address givedAddress,
+    string memory slogan
+  ) external payable override hasGived {
+    _mint(x, y);
+    _giveTo(x, y, givedAddress, slogan);
   }
 
   function mint2AndGiveTo(
@@ -186,8 +188,8 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     address givedAddress2
   ) external payable override hasGived {
     _mint2(x1, y1, x2, y2);
-    _giveTo(x1, y1, givedAddress1);
-    _giveTo(x2, y2, givedAddress2);
+    _giveTo(x1, y1, givedAddress1, "");
+    _giveTo(x2, y2, givedAddress2, "");
   }
 
   function setSlogan(
@@ -215,8 +217,12 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     }
   }
 
-  function setTokenSVGAddress(address _attr) external onlyOwner {
+  function setTokenSVGAddress(address _attr) external override onlyOwner {
     tokenSVGAddress = _attr;
+  }
+
+  function openMintSelfSwitch() external override onlyOwner {
+    mintSelfSwitch = true;
   }
 
   function land(int128 _x, int128 _y)
@@ -273,11 +279,9 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
   {
     (int128 x, int128 y) = getCoordinates(tokenId);
 
-    (
-      bool _ip,
-      bool _ib,
-      ITokenSVG.TokenInfo memory _invite
-    ) = _buildInviteParams(tokenId);
+    (bool _ip, bool _ib, ITokenSVG.TokenInfo memory _invite) = getInviteParams(
+      tokenId
+    );
 
     ITokenSVG.Meta memory meta = ITokenSVG.Meta(
       x,
@@ -287,8 +291,8 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
       _ip,
       _ib,
       _invite,
-      _buildMintedAndInvitedList(tokenId),
-      _buildNeighborsParams(x, y)
+      getMintedAndInvitedList(tokenId),
+      getNeighborsParams(x, y)
     );
 
     result = ITokenSVG(tokenSVGAddress).tokenMeta(meta);
@@ -336,10 +340,44 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     (sx, sy) = ITokenSVG(tokenSVGAddress).getCoordinatesStrings(x, y);
   }
 
+  function _mintToBuilderByOwner(
+    int128 x,
+    int128 y,
+    address givedAddress,
+    string memory slogan
+  ) private {
+    require(
+      _lands[_gived[givedAddress]].givedAddress != givedAddress,
+      "givedAddress is minted or have gived"
+    );
+
+    uint256 _packedXY = packedXY(x, y);
+    require(!_packedXYToIsMinted[_packedXY], "land is minted");
+
+    _lands.push(Land(x, y, "", address(0), givedAddress, true, true));
+    uint256 newTokenId = _lands.length - 1;
+
+    _packedXYToIsMinted[_packedXY] = true;
+    _packedXYToTokenId[_packedXY] = newTokenId;
+    _gived[givedAddress] = newTokenId;
+
+    _safeMint(givedAddress, newTokenId);
+
+    isBuilder[givedAddress] = true;
+
+    if (bytes(slogan).length > 0) {
+      _lands[newTokenId].slogan = slogan;
+    }
+
+    emit Mint(x, y, address(0));
+    emit GiveTo(x, y, givedAddress);
+  }
+
   function _giveTo(
     int128 x,
     int128 y,
-    address givedAddress
+    address givedAddress,
+    string memory slogan
   ) private {
     uint256 tokenId = getTokenId(x, y);
 
@@ -359,6 +397,10 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     _gived[givedAddress] = tokenId;
 
     _safeMint(givedAddress, tokenId);
+
+    if (bytes(slogan).length > 0) {
+      _lands[tokenId].slogan = slogan;
+    }
 
     emit GiveTo(x, y, givedAddress);
   }
@@ -408,8 +450,8 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     emit Mint(x, y, _msgSender());
   }
 
-  function _buildNeighborsParams(int128 x, int128 y)
-    private
+  function getNeighborsParams(int128 x, int128 y)
+    public
     view
     returns (string[] memory tokenIds)
   {
@@ -431,8 +473,8 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     tokenIds[7] = xIsMax || yIsMin ? empty : _getTokenIdStr(x + 1, y - 1);
   }
 
-  function _buildInviteParams(uint256 tokenId)
-    private
+  function getInviteParams(uint256 tokenId)
+    public
     view
     returns (
       bool _ip,
@@ -454,8 +496,8 @@ contract PeopleLand is IPeopleLand, ERC721Enumerable, Ownable {
     _ib = isBuilder[givedAddress];
   }
 
-  function _buildMintedAndInvitedList(uint256 tokenId)
-    private
+  function getMintedAndInvitedList(uint256 tokenId)
+    public
     view
     returns (ITokenSVG.TokenInfo[] memory _list)
   {

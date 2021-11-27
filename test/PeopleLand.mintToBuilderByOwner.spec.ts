@@ -468,4 +468,66 @@ describe("PeopleLand.mintToBuilderByOwner", async () => {
     );
     await expectGetEth(landNFTToken, owner);
   });
+
+  it("with slogan", async () => {
+    const [
+      deployAcc,
+      owner,
+      w1,
+      w2,
+      w3
+    ] = await ethers.getSigners();
+    const wList = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
+      w1.address,
+      w1.address
+    )) as PeopleLand;
+
+    await (await landNFTToken
+      .connect(owner)
+      .mintToBuilderByOwner(
+        1,
+        1,
+        w2.address
+    )).wait();
+
+    await (await landNFTToken
+      .connect(owner)
+      .mintToBuilderByOwnerWithSlogan(
+        2,
+        2,
+        w3.address,
+        "haha"
+    )).wait();
+
+    const land1 = await landNFTToken.land(1, 1);
+    expectLand(
+      land1,
+      land1.isMinted,
+      land1.isGived,
+      1,
+      1,
+      "",
+      ZERO_ADDRESS,
+      w2.address,
+      true,
+      true
+    );
+
+    const land2 = await landNFTToken.land(2, 2);
+    expectLand(
+      land2,
+      land2.isMinted,
+      land2.isGived,
+      2,
+      2,
+      "haha",
+      ZERO_ADDRESS,
+      w3.address,
+      true,
+      true
+    );
+  });
 });

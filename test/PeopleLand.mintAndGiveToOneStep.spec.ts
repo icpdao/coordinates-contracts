@@ -303,4 +303,55 @@ describe("PeopleLand.mintAndGiveToOneStep", async () => {
     );
     await expectGetEth(landNFTToken, w1);
   });
+
+  it("with slogan", async () => {
+    const [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15] =
+      await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.deploy(
+      w1.address,
+      w1.address,
+      w1.address
+    )) as PeopleLand;
+
+    await (
+      await landNFTToken
+        .connect(w1)
+        .mintAndGiveTo(200, 201, w2.address, { value: BigNumber.from(10).pow(18) })
+    ).wait();
+
+    await (
+      await landNFTToken
+        .connect(w1)
+        .mintAndGiveToWithSlogan(300, 301, w3.address, "hello", { value: BigNumber.from(10).pow(18) })
+    ).wait();
+
+    const land1 = await landNFTToken.land(200, 201);
+    expectLand(
+      land1,
+      land1.isMinted,
+      land1.isGived,
+      200,
+      201,
+      "",
+      w1.address,
+      w2.address,
+      true,
+      true
+    );
+
+    const land2 = await landNFTToken.land(300, 301);
+    expectLand(
+      land2,
+      land2.isMinted,
+      land2.isGived,
+      300,
+      301,
+      "hello",
+      w1.address,
+      w3.address,
+      true,
+      true
+    );
+  });
 });

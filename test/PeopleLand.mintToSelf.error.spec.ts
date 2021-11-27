@@ -256,6 +256,8 @@ describe("PeopleLand.mintToSelf.error", async () => {
       w1.address
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
     expect(await landNFTToken.owner()).eq(owner.address);
 
     const [isGived, givedLandW1] = await landNFTToken.givedLand(w1.address);
@@ -312,6 +314,8 @@ describe("PeopleLand.mintToSelf.error", async () => {
       w1.address,
       w1.address
     )) as PeopleLand;
+
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
 
     expect(await landNFTToken.owner()).eq(owner.address);
 
@@ -384,6 +388,8 @@ describe("PeopleLand.mintToSelf.error", async () => {
       w1.address,
       w1.address
     )) as PeopleLand;
+
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
 
     expect(await landNFTToken.owner()).eq(owner.address);
 
@@ -513,5 +519,51 @@ describe("PeopleLand.mintToSelf.error", async () => {
           )
       ).to.revertedWith("land is reserved");
     }
+  });
+
+  it("close", async () => {
+    const [deployAcc, owner, w1, wWiiteList1, w2] = await ethers.getSigners();
+    const LandNFTFactory = await ethers.getContractFactory("PeopleLand");
+    const landNFTToken = (await LandNFTFactory.connect(deployAcc).deploy(
+      owner.address,
+      w1.address,
+      w1.address
+    )) as PeopleLand;
+
+    expect(await landNFTToken.owner()).eq(owner.address);
+
+    await expect(
+      landNFTToken
+        .connect(wWiiteList1)
+        .mintToSelf(
+          29,
+          -29,
+          "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
+          27,
+          "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
+          "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
+        )
+    ).revertedWith("close");
+
+    await expect(landNFTToken.connect(w1).openMintSelfSwitch()).revertedWith("Ownable: caller is not the owner");
+
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
+    await (
+      await landNFTToken
+        .connect(wWiiteList1)
+        .mintToSelf(
+          29,
+          -29,
+          "0xc4281b3214e620b93415b5865789810d6924d18e26959c759cdc29b16909b3a5",
+          27,
+          "0x1fa1de2bdbb061e3a7786854c708a5ed3a8a0c905ff0af74b1841702e1dd3e1f",
+          "0x2236b862a8741f8cccbac01b8b519c4bce6969533ff3c91721ddb39de6341a74"
+        )
+    ).wait();
+
+    expect(
+      await landNFTToken.connect(wWiiteList1).isPeople(wWiiteList1.address)
+    ).eq(true);
   });
 });

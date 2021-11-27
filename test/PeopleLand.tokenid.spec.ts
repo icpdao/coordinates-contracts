@@ -583,6 +583,8 @@ describe("PeopleLand.tokenid", async () => {
       tokenSVG.address,
     )) as PeopleLand;
 
+    await (await landNFTToken.connect(owner).openMintSelfSwitch()).wait();
+
     await (
       await landNFTToken
         .connect(wWiiteList1)

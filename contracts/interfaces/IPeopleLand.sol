@@ -42,6 +42,13 @@ interface IPeopleLand {
     address givedAddress
   ) external;
 
+  function mintToBuilderByOwnerWithSlogan(
+    int128 x,
+    int128 y,
+    address givedAddress,
+    string memory slogan
+  ) external;
+
   function mint(int128 x, int128 y) external payable;
 
   function mint2(
@@ -63,6 +70,13 @@ interface IPeopleLand {
     address givedAddress
   ) external payable;
 
+  function mintAndGiveToWithSlogan(
+    int128 x,
+    int128 y,
+    address givedAddress,
+    string memory slogan
+  ) external payable;
+
   function mint2AndGiveTo(
     int128 x1,
     int128 y1,
@@ -81,6 +95,10 @@ interface IPeopleLand {
   function getEth(uint256 value) external;
 
   function getAllEth() external;
+
+  function setTokenSVGAddress(address _attr) external;
+
+  function openMintSelfSwitch() external;
 
   function land(int128 _x, int128 _y) external view returns (Land memory token);
 
